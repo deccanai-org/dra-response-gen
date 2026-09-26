@@ -365,41 +365,45 @@ def _decision_items(res: dict):
     # with a proposed-verifier string when it happens to name that step; the two
     # disagreed on the toy task ([C2,C3,J1,J2] deterministic vs [J1] model), and
     # trusting the model's shorter list silently dropped the real lambda hole.
+    # SUGGESTED VERIFIERS — ONE merged display list (previously two overlapping lists: "has no
+    # verifier" was a subset of "coverage gaps", forcing the reader to compute the set relation).
+    # Each step appears ONCE, tagged by CONFIDENCE. IDS ARE PRESERVED (gap{i} for the deterministic
+    # entries, gapx{j} for advisory) because the id is the contract with apply_decisions — only the
+    # DISPLAY is merged, not the decision-item identity.
+    #   definite  — deterministically unwatched (provably zero verifiers on this load-bearing step)
+    #   suggested — model-flagged only (may already be watched; advisory)
     cov = res.get("step_coverage") or {}
     step_idx = _step_index(res)
     model_gaps = {str(g.get("step")): g for g in (va.get("coverage_gaps") or [])}
-    for i, step in enumerate(cov.get("unwatched_load_bearing") or []):
+    det_list = [str(s) for s in (cov.get("unwatched_load_bearing") or [])]
+    det_steps = set(det_list)
+    def _sv_card(cid, step, confidence):
         mg = model_gaps.get(str(step), {})
-        # prefer the model's proposal; otherwise auto-author one from the step's
-        # own content so the SME always has something to Accept/Reject, never a
-        # blank "write it yourself".
         proposed = mg.get("proposed_verifier") or _author_gap_verifier(
             str(step), step_idx.get(str(step), {}))
         authored = not mg.get("proposed_verifier")
         why = (mg.get("why_it_matters")
-               or "a load-bearing step no verifier watches: a response could get "
-                  "it wrong with nothing objecting")
-        items.append({"id": f"gap{i}", "kind": "gap", "needs_answer": False,
-                      "step": str(step), "proposed_verifier": proposed,
-                      "proposed_is_authored": authored,
-                      "title": f"step {step} has no verifier",
-                      "body": (f"{_esc(why)}<br><b>proposed"
-                               + (" (auto-authored)" if authored else "")
-                               + f":</b> {_esc(proposed)}"),
-                      "meta": "NOT added — accept to add it"})
-    # a model-proposed gap for a step NOT in the deterministic list is still shown
-    # (the model may see a semantic gap the mapping cannot), but marked advisory.
-    det_steps = {str(s) for s in (cov.get("unwatched_load_bearing") or [])}
-    for j, (step, g) in enumerate(model_gaps.items()):
-        if step in det_steps:
-            continue
-        items.append({"id": f"gapx{j}", "kind": "gap", "needs_answer": False,
-                      "title": f"step {step} — model-flagged coverage gap",
-                      "body": (f"{_esc(g.get('why_it_matters'))}<br>"
-                               f"<b>proposed:</b> {_esc(g.get('proposed_verifier'))}"
-                               f"<br><i>advisory: not in the deterministic "
-                               f"unwatched-step list</i>"),
-                      "meta": "NOT added — accept to add it"})
+               or ("a load-bearing step no verifier watches: a response could get it wrong "
+                   "with nothing objecting"))
+        if confidence == "definite":
+            badge = ("<span style='background:#fde2e0;color:#b4413c;padding:1px 7px;"
+                     "border-radius:5px;font-size:12px;font-weight:600'>definite — unwatched</span>")
+        else:
+            badge = ("<span style='background:#eee7d6;color:#9a7400;padding:1px 7px;"
+                     "border-radius:5px;font-size:12px'>suggested — advisory</span>")
+        return {"id": cid, "kind": "gap", "needs_answer": False,
+                "step": str(step), "confidence": confidence,
+                "proposed_verifier": proposed, "proposed_is_authored": authored,
+                "title": f"suggested verifier for step {step}",
+                "body": (f"{badge}<br>{_esc(why)}<br><b>proposed"
+                         + (" (auto-authored)" if authored else "")
+                         + f":</b> {_esc(proposed)}"),
+                "meta": "NOT added — accept to add it"}
+    # definite first (id gap{i}, matching apply_decisions), then advisory (id gapx{j})
+    for i, step in enumerate(det_list):
+        items.append(_sv_card(f"gap{i}", step, "definite"))
+    for j, step in enumerate(s2 for s2 in model_gaps if s2 not in det_steps):
+        items.append(_sv_card(f"gapx{j}", step, "suggested"))
     # Duplicate clusters: two+ verifiers assert the same quantity. The audit
     # recommends which to keep; make it an actionable decision so a redundant
     # verifier is actually dropped (MECE) rather than merely noted and shipped.
@@ -619,9 +623,11 @@ def _property_table(res: dict) -> str:
                      f"both assert {_esc(c.get('quantity'))} "
                      f"(values agree: {c.get('values_agree')}) — "
                      f"{_esc(c.get('recommended_action'))}</li>")
+    _detset = {str(s) for s in ((res.get("step_coverage") or {}).get("unwatched_load_bearing") or [])}
     for g in va.get("coverage_gaps") or []:
-        extra.append(f"<li>step <b>{_esc(g.get('step'))}</b> has no verifier: "
-                     f"{_esc(g.get('why_it_matters'))}<br>"
+        tag = "definite — unwatched" if str(g.get("step")) in _detset else "suggested — advisory"
+        extra.append(f"<li>suggested verifier for step <b>{_esc(g.get('step'))}</b> "
+                     f"<i>({tag})</i>: {_esc(g.get('why_it_matters'))}<br>"
                      f"<i>proposed:</i> {_esc(g.get('proposed_verifier'))}</li>")
     for t in res.get("target_disagreements") or []:
         extra.append(f"<li><span class='pill bad'>target overridden</span> "

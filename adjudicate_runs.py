@@ -766,6 +766,16 @@ def build_sme_package(final: dict, adj: Adjudication,
         _apply_overrides_to_claims(pkg, adj)
         _apply_overrides_to_verifier_text(pkg, adj)
 
+    # POST-ADJUDICATION RE-SPLIT (Option 2): the value-clustering merge can leave a few compound
+    # verifiers and redundant parent/child pairs. Re-atomize the CONSENSUS set with the concern-split
+    # audit before deriving the frozen graph, so DAG/crux/Shapley are computed over the atomic set.
+    try:
+        from src.post_adjudication_split import resplit_adjudicated
+        pkg = resplit_adjudicated(pkg)
+    except Exception as _e:                                      # noqa: BLE001
+        pkg.setdefault("notes", []).append(f"post-adjudication re-split skipped: {_e}") \
+            if isinstance(pkg.get("notes"), list) else None
+
     try:
         from src.augment_task import derive_frozen_graph
         pkg = derive_frozen_graph(pkg, compute_shapley=True)

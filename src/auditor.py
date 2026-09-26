@@ -48,7 +48,8 @@ from src.verifier_qc import run_verifier_qc, qc_summary
 from src.verifier_grammar import derive_expected_values
 from src.derive_dag import (claim_graph, graph_health, map_verifiers_to_steps,
                             step_coverage)
-from src.verifier_audit import (audit_verifiers, apply_rewrites, apply_splits,
+from src.verifier_audit_split import audit_verifiers_split
+from src.verifier_audit import (apply_rewrites, apply_splits,
                                 format_verifiers_ids)
 
 logger = logging.getLogger("dra.auditor")
@@ -943,13 +944,15 @@ def _finalize_verifier_set(result: "AuditResult", original_verifiers_text: str,
         "near_misses": vmap.near_misses, "detail": vmap.detail}
     coverage = step_coverage(step_nodes, step_graph, frozen_map)
 
-    # the property audit (atomicity / splits / rewrites)
-    va = audit_verifiers(
+    # the property audit (atomicity / splits / rewrites): concern-split — five focused worker
+    # calls + an Opus consolidator. Replaces the monolithic single call, which under-split
+    # (one blatant split per run, missing trap-bearing verifiers).
+    va = audit_verifiers_split(
         task_id=result.task_id, verifiers=all_vs, expected_values=ev,
         step_nodes=step_nodes, solution_logic=result.corrected_solution_logic,
         sanity_check=result.corrected_sanity_check,
         mapping_report=mapping_report, coverage=coverage,
-        verifier_to_step=frozen_map, model=model_name)
+        verifier_to_step=frozen_map)
     result.verifier_audit = va.to_dict()
     if not va.error:
         if va.rewrites:
