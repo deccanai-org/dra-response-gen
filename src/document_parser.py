@@ -8,6 +8,20 @@ from pathlib import Path
 warnings.filterwarnings("ignore", message=".*pymupdf_layout.*")
 
 
+def _soffice_convert(path, target):
+    """Convert a legacy binary Office file to a modern format via soffice headless. Returns a Path to
+    the converted file (temp dir kept for process lifetime) or None on failure."""
+    import subprocess, tempfile, os as _os
+    from pathlib import Path as _Path
+    try:
+        td = tempfile.mkdtemp(prefix="soffice_")
+        subprocess.run(["soffice", "--headless", "--convert-to", target, "--outdir", td, str(path)],
+                       check=True, capture_output=True, timeout=180)
+        out = _os.path.join(td, _Path(path).stem + "." + target)
+        return _Path(out) if _os.path.exists(out) else None
+    except Exception:
+        return None
+
 def read_document(file_path: str) -> str:
     """
     Reads and extracts text from a document.
@@ -34,6 +48,17 @@ def read_document(file_path: str) -> str:
     # Sniff the container so a real pptx/xlsx/docx/pdf is not silently dropped.
     if not extension:
         extension = _sniff_extension(path) or extension
+
+    # Legacy binary Office formats (.doc/.xls/.ppt) cannot be read by python-docx/openpyxl/python-pptx.
+    # Convert to the modern format via soffice (LibreOffice headless), then route to the normal reader.
+    if extension in (".doc", ".xls", ".ppt"):
+        _target = {".doc": "docx", ".xls": "xlsx", ".ppt": "pptx"}[extension]
+        _conv = _soffice_convert(path, _target)
+        if _conv is not None:
+            path = _conv
+            extension = "." + _target
+        else:
+            raise NotImplementedError(f"legacy {extension} could not be converted (soffice missing?)")
 
     if extension == ".txt" or extension == ".md":
         return _read_txt(path)
@@ -133,16 +158,37 @@ def _html_to_text(html: str) -> str:
     soup = BeautifulSoup(html, "lxml")
     for t in soup(["script", "style"]):
         t.decompose()
+    import re as _re
+    def _is_header(cells):
+        joined = " ".join(cells).lower()
+        # real period phrases are the strong signal; bare years alone can be a TOC/page list, so
+        # require an explicit period phrase, OR >=2 years TOGETHER WITH a period word.
+        period_phrases = ("year ended","months ended","period from","period ended","fiscal year",
+                          "predecessor","successor","pro forma","three months","six months","nine months")
+        has_phrase = any(w in joined for w in period_phrases)
+        yrs = len(_re.findall(r'\b(?:19|20)\d{2}\b', joined))
+        return has_phrase and yrs >= 1
     tables = []
     for tbl in soup.find_all("table"):
         rows = []
+        header_line = None
         for tr in tbl.find_all("tr"):
-            cells = [c.get_text(" ", strip=True)
-                     for c in tr.find_all(["td", "th"])]
+            # colspan-aware: preserve column positions so headers align with data
+            cells = []
+            for c in tr.find_all(["td", "th"]):
+                txt = c.get_text(" ", strip=True)
+                try: span = int(c.get("colspan") or 1)
+                except ValueError: span = 1
+                cells.append(txt)
+                cells.extend([""] * (span - 1))
+            nonempty = [c for c in cells if c]
             if any(cells):
-                rows.append(" | ".join(cells))
+                if header_line is None and _is_header(nonempty):
+                    header_line = "COLUMNS: " + " | ".join(nonempty)
+                rows.append(" | ".join(nonempty))
         if rows:
-            tables.append("\n".join(rows))
+            tbl_txt = ("\n".join([header_line] + rows) if header_line else "\n".join(rows))
+            tables.append(tbl_txt)
         tbl.decompose()                      # remove so body text isn't dup'd
     body = soup.get_text("\n", strip=True)
     parts = [p for p in (body, "\n\n".join(tables)) if p]

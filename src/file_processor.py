@@ -75,7 +75,7 @@ NATIVE_DOCUMENT_EXTS = {".pdf"}
 NATIVE_IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
 TEXT_EXTRACT_EXTS = {".docx", ".xlsx", ".xls", ".pptx", ".csv", ".tsv",
                      ".txt", ".md", ".html", ".htm", ".mht", ".mhtml",
-                     ".json", ".xml"}
+                     ".json", ".xml", ".doc", ".ppt"}   # .doc/.ppt legacy handled via soffice
 
 ALL_SUPPORTED_EXTS = NATIVE_DOCUMENT_EXTS | NATIVE_IMAGE_EXTS | TEXT_EXTRACT_EXTS
 
@@ -228,6 +228,19 @@ class FileProcessor:
                 error=f"Unsupported format: {ext}",
             )
         
+        # ── Legacy binary Office -> modern via soffice (python readers can't read .doc/.xls/.ppt) ──
+        if ext in (".doc", ".xls", ".ppt"):
+            from src.document_parser import _soffice_convert
+            _target = {".doc": "docx", ".xls": "xlsx", ".ppt": "pptx"}[ext]
+            _conv = _soffice_convert(Path(filepath), _target)
+            if _conv is not None:
+                filepath = str(_conv); ext = "." + _target
+            else:
+                return ProcessedFile(
+                    filename=filename, filepath=filepath, format="unknown",
+                    content_blocks=[], original_size_bytes=file_size,
+                    error=f"legacy {ext} conversion failed (soffice missing?)")
+
         # ── Route to processor ───────────────────────────────────
         try:
             if ext in NATIVE_DOCUMENT_EXTS:
