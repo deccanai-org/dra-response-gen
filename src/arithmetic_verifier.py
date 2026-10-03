@@ -33,6 +33,7 @@ Outcomes per claim:
   CONFIRMED          arithmetic correct AND (provenance ok OR not checked)
   ARITHMETIC_ERROR   recomputed result != claimed_result
   INPUT_ERROR        a declared input value not found in source text
+  WRONG_PERIOD       input value exists in source but under a different period than claimed
   MISLABELLED_INPUT  an input declared source_type='file' is absent from every
                      file — usually a computed subtotal written as a read, which
                      hides the computation that produced it
@@ -450,6 +451,26 @@ def _fmt(x: float) -> str:
     return str(int(x)) if x == int(x) else f"{x:g}"
 
 
+
+_YEAR = re.compile(r"\b(?:19|20)\d{2}\b")
+_QMON = re.compile(r"\bQ[1-4]\b|\b[1-4]Q\b|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b", re.I)
+def _periods_of(text):
+    text = text or ""
+    out = set(_YEAR.findall(text))
+    out.update(m.lower() for m in _QMON.findall(text) if m)
+    return out
+def _adjacent_period(num, source_text):
+    """Period token(s) bound to num: a parenthetical right after it, else nearest within a tight window."""
+    for c in ({str(int(num)), f"{int(num):,}"} if num==int(num) else {f"{num:.1f}", f"{num:.2f}", f"{num:g}"}):
+        for m in re.finditer(r"(?<![\d.,])"+re.escape(c)+r"(?!\d)(?![.,]\d)", source_text):
+            paren = re.match(r"\s*\(([^)]{0,40})\)", source_text[m.end():m.end()+42])
+            if paren:
+                ps=_periods_of(paren.group(1))
+                if ps: return ps
+            ps=_periods_of(source_text[max(0,m.start()-45):m.end()+45])
+            if ps: return ps
+    return set()
+
 def verify_claim(
     claim: ArithmeticClaim,
     source_text: Optional[str] = None,
@@ -506,6 +527,17 @@ def verify_claim(
                 entry["found_in_source"] = _number_appears(num, source_text)
                 if entry["found_in_source"] is False:
                     input_error = True
+                elif entry["found_in_source"] is True:
+                    # PERIOD CHECK: value is present — confirm it is under the period the claim
+                    # attributes it to. Catches a real figure lifted from the wrong period column
+                    # (e.g. a Dec-2006 comparative used as the Sep-2007 current value).
+                    claim_periods = _periods_of((inp.source or "") + " " + (claim.label or ""))
+                    if claim_periods:
+                        adj = _adjacent_period(num, source_text)
+                        if adj and not (claim_periods & adj):
+                            entry["period_mismatch"] = True
+                            entry["period_detail"] = (f"value under {sorted(adj)} but claim attributes "
+                                                      f"it to {sorted(claim_periods)}")
                     # A value the producer DECLARED as coming from a file, which
                     # is not in the file, is a different animal from a value we
                     # simply could not place. It is almost always a computed
@@ -543,6 +575,36 @@ def verify_claim(
             claimed=claimed, detail="no operation supplied",
             input_provenance=provenance,
         )
+    # LEAF / IDENTITY claim: the operation is a single bare variable (e.g. "ar_rev_K") — a value
+    # RETRIEVED from a document, not computed. safe_eval would raise "unknown variable" on it (the
+    # re-split path hit this and mislabelled such leaves UNVERIFIABLE, though the raw pass confirmed
+    # them). A leaf is correct iff its value appears in source (provenance) and equals its single
+    # input — verify it that way instead of arithmetic-evaluating a passthrough.
+    _op = claim.operation.strip()
+    if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", _op):
+        # it's a lone identifier. If it names the single declared input (or the input value equals the
+        # claimed result), this is a retrieved leaf.
+        _single = len(claim.inputs) == 1
+        _val_matches = False
+        if _single:
+            try:
+                _val_matches = abs(float(claim.inputs[0].value) - float(claimed)) < 1e-6
+            except (TypeError, ValueError):
+                _val_matches = False
+        if _single and (_op == claim.inputs[0].name or _val_matches):
+            # verified by provenance: the leaf value must appear in source
+            found = provenance[0]["found_in_source"] if provenance else None
+            if found is False:
+                return ClaimVerdict(
+                    id=claim.id, label=claim.label, status="INPUT_ERROR",
+                    claimed=claimed, recomputed=claimed,
+                    detail=f"retrieved value {claimed} not found in source (leaf claim)",
+                    input_provenance=provenance)
+            return ClaimVerdict(
+                id=claim.id, label=claim.label, status="CONFIRMED",
+                claimed=claimed, recomputed=claimed,
+                detail="retrieved leaf value (identity passthrough); confirmed by provenance",
+                input_provenance=provenance)
     try:
         recomputed = float(safe_eval(claim.operation, variables))
     except UnsafeExpression as e:
@@ -582,7 +644,13 @@ def verify_claim(
         status = "INPUT_ERROR"
         bad = [p["name"] for p in provenance if p["found_in_source"] is False]
         detail = (f"arithmetic checks out, but declared input(s) {bad} not found "
-                  f"in source — possible wrong/trap input used")
+                  f"in source — possible fabricated/wrong input used")
+    elif any(p.get("period_mismatch") for p in provenance):
+        status = "WRONG_PERIOD"
+        pm = [p["name"] for p in provenance if p.get("period_mismatch")]
+        det = "; ".join(p.get("period_detail","") for p in provenance if p.get("period_mismatch"))
+        detail = (f"arithmetic checks out and inputs exist, but input(s) {pm} appear under a "
+                  f"different period than the claim attributes them to — {det}")
     else:
         status = "CONFIRMED"
         detail = f"recomputed {recomputed:g} matches claimed {claimed:g}"
@@ -604,20 +672,33 @@ def _number_appears(num: float, source_text: str) -> bool:
     if num == int(num):
         n = int(num)
         candidates.add(str(n))
-        # Western grouping
         candidates.add(f"{n:,}")
-        # Indian grouping
         candidates.add(_indian_group(n))
+        # integer-valued but may be written with a trailing decimal in the source (184 -> 184.0)
+        candidates.add(f"{n}.0")
+        candidates.add(f"{n:,}.0")
     else:
         candidates.add(f"{num:g}")
         candidates.add(f"{num:.1f}")
         candidates.add(f"{num:.2f}")
-    # Normalize source by removing commas/spaces for a fallback contains-check
-    src_nospace = re.sub(r"[,\s]", "", source_text)
-    bare = (str(int(num)) if num == int(num) else f"{num:g}")
-    if bare in src_nospace:
-        return True
-    return any(c in source_text for c in candidates)
+    # Boundary-guarded match: the rendering must not sit inside a longer number (so 22474 does not
+    # match as a fragment of 122474 or an accession/CIK/date). This replaces the old
+    # comma-stripped substring fallback, which matched coincidental digit runs anywhere in a
+    # multi-MB filing and let fabricated figures pass provenance.
+    for c in candidates:
+        # allow an optional trailing .0/.00 in the source (184 matches 184.0); still guard the left
+        # side and the right side beyond the decimals so 184 does not match 1840 or 184.57.
+        pat = r"(?<![\d.,])" + re.escape(c) + (r"(?:\.0+)?(?!\d)(?![.,]\d)" if "." not in c else r"(?!\d)(?![.,]\d)")
+        if re.search(pat, source_text):
+            return True
+    # thousands-scale tolerance ($M claim vs $K source): also try x1000 / ÷1000 renderings, guarded.
+    for scale in (1000.0, 0.001):
+        sv = num * scale
+        if sv == int(sv):
+            for c in {str(int(sv)), f"{int(sv):,}"}:
+                if len(re.sub(r"[^\d]","",c))>=2 and re.search(r"(?<![\d.,])"+re.escape(c)+r"(?!\d)(?![.,]\d)", source_text):
+                    return True
+    return False
 
 
 def _indian_group(n: int) -> str:

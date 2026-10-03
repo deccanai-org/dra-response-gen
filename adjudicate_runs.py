@@ -404,8 +404,42 @@ def adjudicate(
             chosen = _judge_value(adj, llm_judge, role=role, tally=tally,
                                   majority=winner, has_majority=has_maj,
                                   occ=occ, kind="claim_value")
-        final_claims.append(_rep(occ, vr_idx, chosen, adj=adj, role=role))
+        rep = _rep(occ, vr_idx, chosen, adj=adj, role=role)
+        # PRESERVE PROVENANCE FINDINGS: WRONG_PERIOD / INPUT_ERROR are facts about the claim's inputs
+        # (fabricated / mis-dated), not about its value. Value-based representative selection can drop
+        # them if the chosen rep (from another run) was CONFIRMED. If ANY occurrence in this cluster
+        # flagged such a finding, carry the more-severe status + its detail onto the merged claim so it
+        # reaches the SME instead of vanishing.
+        _sev = {"INPUT_ERROR": 3, "WRONG_PERIOD": 2}
+        _flagged = [c for _ri, c in occ if (c.get("status") or "").upper() in _sev]
+        if _flagged and (rep.get("status") or "").upper() not in _sev:
+            worst = max(_flagged, key=lambda c: _sev.get((c.get("status") or "").upper(), 0))
+            rep = dict(rep)
+            rep["status"] = worst.get("status")
+            rep["detail"] = (worst.get("detail") or rep.get("detail", "")) + " [provenance finding preserved across runs]"
+            if worst.get("input_provenance"):
+                rep["input_provenance"] = worst["input_provenance"]
+        final_claims.append(rep)
     final["corrected_claim_verdicts"] = final_claims
+
+    # Recompute the arithmetic summary FROM the corrected verdicts, so the headline count matches the
+    # detail (previously final kept the stale pre-correction arithmetic_summary — e.g. showing 12
+    # input_error while the corrected verdicts had 26). Counts by status, mirroring summarize().
+    from collections import Counter as _Counter
+    _sc = _Counter((c.get("status") or "").upper() for c in final_claims)
+    _corrected_summary = {
+        "total": len(final_claims),
+        "confirmed": _sc.get("CONFIRMED", 0),
+        "arithmetic_error": _sc.get("ARITHMETIC_ERROR", 0),
+        "input_error": _sc.get("INPUT_ERROR", 0),
+        "wrong_period": _sc.get("WRONG_PERIOD", 0),
+        "mislabelled_input": _sc.get("MISLABELLED_INPUT", 0),
+        "unverifiable": _sc.get("UNVERIFIABLE", 0),
+    }
+    _corrected_summary["any_error"] = any(
+        _corrected_summary[k] for k in ("arithmetic_error", "input_error", "wrong_period"))
+    final["arithmetic_summary"] = _corrected_summary
+    final["corrected_arithmetic_summary"] = _corrected_summary
 
     # VERIFIERS
     ver_items = [{"ref": (r.idx, v), "label": v["text"]}
@@ -765,16 +799,6 @@ def build_sme_package(final: dict, adj: Adjudication,
         # the coherent trajectory shows the adjudicated (corrected) numbers
         _apply_overrides_to_claims(pkg, adj)
         _apply_overrides_to_verifier_text(pkg, adj)
-
-    # POST-ADJUDICATION RE-SPLIT (Option 2): the value-clustering merge can leave a few compound
-    # verifiers and redundant parent/child pairs. Re-atomize the CONSENSUS set with the concern-split
-    # audit before deriving the frozen graph, so DAG/crux/Shapley are computed over the atomic set.
-    try:
-        from src.post_adjudication_split import resplit_adjudicated
-        pkg = resplit_adjudicated(pkg)
-    except Exception as _e:                                      # noqa: BLE001
-        pkg.setdefault("notes", []).append(f"post-adjudication re-split skipped: {_e}") \
-            if isinstance(pkg.get("notes"), list) else None
 
     try:
         from src.augment_task import derive_frozen_graph

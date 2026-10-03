@@ -18,7 +18,7 @@ The Opus judge has no fallback (hard-stop) — see prompt_evaluator.MODEL_FALLBA
 
 from __future__ import annotations
 
-import re
+import os, re
 
 #: Verifier-id pattern shared across the pipeline — classic (V1, V5a) AND
 #: semantic (V_P1_pat_2004, V_P1_v2.0) ids some synthetic pipelines emit.
@@ -48,8 +48,7 @@ from src.verifier_qc import run_verifier_qc, qc_summary
 from src.verifier_grammar import derive_expected_values
 from src.derive_dag import (claim_graph, graph_health, map_verifiers_to_steps,
                             step_coverage)
-from src.verifier_audit_split import audit_verifiers_split
-from src.verifier_audit import (apply_rewrites, apply_splits,
+from src.verifier_audit import (audit_verifiers, apply_rewrites, apply_splits,
                                 format_verifiers_ids)
 
 logger = logging.getLogger("dra.auditor")
@@ -104,6 +103,7 @@ _HEADER_ALIASES = {
     "solution_logic": ["solution logic", "solution_logic", "logic",
                        "golden_solution_logic", "golden solution logic",
                        "corrected_solution_logic", "corrected solution logic"],
+    "json": ["json", "json_path", "package_json", "sidecar"],
     "verifiers": ["verifiers", "verifier", "verifiers ",
                   "augmented_verifiers", "augmented verifiers"],
     "golden_deliverable": ["golden_deliverable", "golden deliverable"],
@@ -247,6 +247,7 @@ class AuditResult:
     input_files_supplied: bool = False
     input_files_names: List[str] = field(default_factory=list)
     provenance_checked: bool = False
+    provenance_expected_not_run: bool = False
     provenance_note: str = ""
 
     # corrections + findings
@@ -405,7 +406,15 @@ BLOCKING_CLAIM_STATUSES = ("ARITHMETIC_ERROR",)
 #: file, hiding an unverified computation — but it appeared on 2 of 43 inputs
 #: across two tasks, which is too thin to justify blocking. To promote it, move
 #: the string to BLOCKING_CLAIM_STATUSES; nothing else needs to change.
-WARNING_CLAIM_STATUSES = ("INPUT_ERROR", "MISLABELLED_INPUT")
+#: WRONG_PERIOD (new): the input value exists in source but under a different period than the claim
+#: attributes it to (e.g. a Dec-2006 comparative used as the Sep-2007 current value). Warns for now,
+#: alongside INPUT_ERROR — surfaced to the SME, not auto-blocking.
+#: NOTE on INPUT_ERROR: it was demoted to a warning because the OLD provenance match was loose and
+#: false-flagged computed intermediates. The provenance check has since been hardened (boundary-guarded
+#: matching; derived/inline inputs already skipped), so INPUT_ERROR now reliably means a fabricated /
+#: absent input. Promoting it to BLOCKING_CLAIM_STATUSES is now reasonable — left as a deliberate
+#: policy choice for the team rather than changed unilaterally.
+WARNING_CLAIM_STATUSES = ("INPUT_ERROR", "MISLABELLED_INPUT", "WRONG_PERIOD")
 
 
 def arithmetic_gate(verdicts, input_files_supplied: bool = True,
@@ -567,6 +576,42 @@ def audit_task(
     verifiers_text = get_field(row, header_map, "verifiers")
     prompt_type = get_field(row, header_map, "prompt_type") or "(unspecified)"
 
+    # --- Prefer a sidecar JSON when the row points to one ------------------------------------------
+    # A large task's Verifiers / Solution Logic cell can exceed Excel's 32,767-char cell cap; if the
+    # CSV was opened+saved in Excel the cell is truncated and the auditor would silently audit a
+    # partial verifier set. If the row carries a `json` column with the task's package path, read the
+    # authoritative full text from there instead — it has no cell limit and is round-trip-proof.
+    _json_path = get_field(row, header_map, "json")
+    if _json_path and os.path.exists(_json_path):
+        try:
+            _pkg = json.load(open(_json_path, encoding="utf-8"))
+            _dr = _pkg.get("draft", _pkg)
+            def _fmt_claims(cl):
+                out=[]
+                for c in cl:
+                    ins=", ".join(f"{i.get('name')}={i.get('value')}" for i in (c.get('inputs') or []))
+                    out.append(f"{c.get('id')} — {c.get('label','')}: {c.get('operation','')} = "
+                               f"{c.get('claimed_result','')}" + (f" [inputs: {ins}]" if ins else "")
+                               + (f" (source: {c.get('source','')})" if c.get('source') else ""))
+                return "\n".join(out)
+            def _fmt_vers(vs):
+                out=[]
+                for v in vs:
+                    crux=" [crux]" if v.get("crux") else ""
+                    out.append(f"{v.get('id')}{crux}: {v.get('check','')}")
+                return "\n".join(out)
+            if _dr.get("prompt"): prompt_text = _dr["prompt"]
+            if _dr.get("solution_logic"): solution_logic_text = _fmt_claims(_dr["solution_logic"])
+            if _dr.get("verifiers"): verifiers_text = _fmt_vers(_dr["verifiers"])
+            if _dr.get("sanity_check"): sanity_check_text = _dr.get("sanity_check","")
+            # EMBEDDED SOURCE: if the package carries source_text (embed_source.py) and the caller
+            # gave no input_files_text, use it — so a JSON copied to another machine still runs
+            # provenance/grounding with no external files or Drive.
+            if not input_files_text and _dr.get("source_text"):
+                input_files_text = _dr["source_text"]
+        except Exception as _e:
+            pass   # fall back to CSV cells on any read/parse error
+
     result = AuditResult(task_id=task_id)
     # search_text is what CODE greps; prompt_text is what the model reads.
     if input_corpus is not None and getattr(input_corpus, "full_text", ""):
@@ -695,6 +740,19 @@ def audit_task(
     result.provenance_checked = bool(result.input_files_supplied and any_checked)
     if result.provenance_checked:
         result.provenance_note = "Declared input values were checked against the supplied input files."
+    # LOUD GUARD: provenance was EXPECTED but did not run. If the task has numeric raw inputs to check
+    # yet no source was supplied, a "clean" arithmetic result is HOLLOW — it never verified any figure
+    # against source. Do NOT let such a task look SOUND. Flag it and block proceedability.
+    _has_checkable_inputs = any(
+        (p.get("found_in_source") is None and p.get("source_kind") == "raw")
+        for v in verdicts for p in v.input_provenance)
+    result.provenance_expected_not_run = bool(_has_checkable_inputs and not result.provenance_checked)
+    if result.provenance_expected_not_run:
+        result.provenance_note = (
+            "PROVENANCE NOT RUN: the task declares raw source-backed inputs but NO input files were "
+            "supplied, so NOT ONE figure was checked against source. Arithmetic passed on internal "
+            "consistency only. This is NOT a clean result — fabricated or mis-sourced figures would "
+            "pass undetected. Supply the source (Drive link / files) and re-audit.")
 
     # --- Stage 3: short-circuit if call 1 is clean -----------------------
     prelim = (call1.get("preliminary_verdict") or "").upper().replace("-", "_")
@@ -703,7 +761,7 @@ def audit_task(
     # so this can no longer report a clean sweep on a task with unread input.
     no_findings = not (result.leakage_findings or result.temporal_drift_findings
                        or result.missing_inputs)
-    if prelim == "SOUND" and no_arith_errors and no_findings:
+    if prelim == "SOUND" and no_arith_errors and no_findings and not result.provenance_expected_not_run:
         result.verdict = "SOUND"
         result.primary_reason = "No defects found; arithmetic confirmed; no leakage/drift."
         result.proceedable = True
@@ -764,6 +822,12 @@ def audit_task(
         return result
 
     result.verdict = (call2.get("verdict") or prelim or "UNKNOWN").upper().replace("-", "_")
+    if result.provenance_expected_not_run:
+        result.proceedable = False
+        if result.verdict in ("SOUND",):
+            result.verdict = "UNGRADEABLE"
+        result.primary_reason = ("Provenance not run (no source supplied) — figures unverified against "
+                                 "source; " + (result.primary_reason or ""))
     result.primary_reason = call2.get("primary_reason", "")
     result.decision_inversion = bool(call2.get("decision_inversion", False))
     result.corrected_solution_logic = call2.get("corrected_solution_logic", "") or ""
@@ -944,15 +1008,13 @@ def _finalize_verifier_set(result: "AuditResult", original_verifiers_text: str,
         "near_misses": vmap.near_misses, "detail": vmap.detail}
     coverage = step_coverage(step_nodes, step_graph, frozen_map)
 
-    # the property audit (atomicity / splits / rewrites): concern-split — five focused worker
-    # calls + an Opus consolidator. Replaces the monolithic single call, which under-split
-    # (one blatant split per run, missing trap-bearing verifiers).
-    va = audit_verifiers_split(
+    # the property audit (atomicity / splits / rewrites)
+    va = audit_verifiers(
         task_id=result.task_id, verifiers=all_vs, expected_values=ev,
         step_nodes=step_nodes, solution_logic=result.corrected_solution_logic,
         sanity_check=result.corrected_sanity_check,
         mapping_report=mapping_report, coverage=coverage,
-        verifier_to_step=frozen_map)
+        verifier_to_step=frozen_map, model=model_name)
     result.verifier_audit = va.to_dict()
     if not va.error:
         if va.rewrites:

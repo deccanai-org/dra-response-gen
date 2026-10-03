@@ -121,6 +121,52 @@ def _adjudicate_task(run_dir_base, manifest, model, no_llm=False, no_html=False)
           f"{final.get('audit_verdict')} | {len(adj.overrides)} override(s)")
 
 
+def rows_from_json(paths):
+    """Build (headers, rows) from deep-case package JSON(s), matching the CSV row-dict shape so the
+    existing pipeline runs unchanged. Verifiers / solution logic are rendered to the text columns the
+    auditor parses; a `json` column carries the absolute package path so audit_task reads full text
+    straight from the JSON (no CSV cell limit)."""
+    import json as _json, glob as _glob, os as _os
+    headers = ["task_id","prompt_id","Primary Prompt Type","Secondary Prompt Type","Prompt",
+               "Sanity Check","Solution Logic","Drive Link","Verifiers","Estimated Time",
+               "Sub-Domain","Task Focus","json"]
+    def _claims_text(cl):
+        out=[]
+        for c in cl:
+            ins=", ".join(f"{i.get('name')}={i.get('value')}" for i in (c.get('inputs') or []))
+            out.append(f"{c.get('id')} — {c.get('label','')}: {c.get('operation','')} = "
+                       f"{c.get('claimed_result','')}" + (f" [inputs: {ins}]" if ins else "")
+                       + (f" (source: {c.get('source','')})" if c.get('source') else ""))
+        return "\n".join(out)
+    def _vers_text(vs):
+        out=[]
+        for v in vs:
+            crux=" [crux]" if v.get("crux") else ""
+            out.append(f"{v.get('id')}{crux}: {v.get('check','')}")
+        return "\n".join(out)
+    rows=[]
+    expanded=[]
+    for p in paths:
+        expanded += _glob.glob(p) or [p]
+    for p in expanded:
+        pkg=_json.load(open(p, encoding="utf-8"))
+        dr=pkg.get("draft", pkg)
+        prompt=dr.get("prompt","")
+        rules=dr.get("governing_rules",[])
+        if rules:
+            prompt=prompt.rstrip()+"\n\nSourcing conventions:\n"+"\n".join(f"- {r}" for r in rules)
+        rows.append({
+            "task_id": dr.get("task_id",""),
+            "prompt_id": "", "Primary Prompt Type": dr.get("prompt_type","FSP"),
+            "Secondary Prompt Type": "LDP", "Prompt": prompt, "Sanity Check": "",
+            "Solution Logic": _claims_text(dr.get("solution_logic",[])),
+            "Drive Link": "", "Verifiers": _vers_text(dr.get("verifiers",[])),
+            "Estimated Time": "", "Sub-Domain": dr.get("sub_domain",""), "Task Focus": "",
+            "json": _os.path.abspath(p),
+        })
+    return headers, rows
+
+
 def load_rows(path):
     """Banner-row tolerant; see src.auditor.read_task_csv."""
     return read_task_csv(path)
@@ -128,7 +174,10 @@ def load_rows(path):
 
 def main():
     ap = argparse.ArgumentParser(description="Direct prompt-package augmenter")
-    ap.add_argument("--csv", required=True)
+    ap.add_argument("--csv", default=None, help="task CSV (banner-tolerant). Use this OR --json.")
+    ap.add_argument("--json", nargs="+", default=None,
+                    help="one or more deep-case package JSON files (globs ok) to audit directly, "
+                         "no CSV needed. The auditor reads full verifier/solution text from the JSON.")
     ap.add_argument("--row", type=int, default=None)
     ap.add_argument("--task", action="append", default=None,
                     help="select by task_id instead of row number; repeatable. "
@@ -156,7 +205,28 @@ def main():
     if args.adjudicate and args.runs < 3:
         ap.error("--adjudicate needs --runs >= 3 (default 5 is typical)")
 
-    headers, rows = load_rows(args.csv)
+    if not args.csv and not args.json:
+        ap.error("provide --csv or --json")
+    if args.csv and args.json:
+        ap.error("use --csv OR --json, not both")
+    if args.json:
+        headers, rows = rows_from_json(args.json)
+        # guard: two packages with the SAME task_id would collide in {out_dir}/{task_id}/. Disambiguate
+        # by suffixing a short hash of the source filename, and warn — never silently overwrite.
+        import hashlib as _hl, os as _os
+        seen_ids = {}
+        for r in rows:
+            tid = r["task_id"]
+            if tid in seen_ids:
+                suffix = _hl.sha1(r["json"].encode()).hexdigest()[:6]
+                new_tid = f"{tid}__{suffix}"
+                print(f"  ! duplicate task_id {tid!r} across JSONs — disambiguating "
+                      f"{_os.path.basename(r['json'])} as {new_tid}", flush=True)
+                r["task_id"] = new_tid
+            seen_ids[r["task_id"]] = r["json"]
+        print(f"loaded {len(rows)} task(s) from JSON", flush=True)
+    else:
+        headers, rows = load_rows(args.csv)
     try:
         hmap = build_header_map(headers)
     except HeaderError as e:
