@@ -29,7 +29,7 @@ class AugScoreConfig:
     out_dir_score: str = "output/scores"
 
     # model + concurrency
-    model: str = "claude-opus-4-8"
+    model: str = "claude-opus-5"
     workers: int = 4                           # parallel grading threads (I/O bound)
 
     def override(self, **kw) -> "AugScoreConfig":

@@ -22,12 +22,12 @@ Emits:
   crux_judge_detail.json  {task_id: {reported_answers:[...], reasoning:...}}
 
 Usage:
-  export ANTHROPIC_API_KEY=...
+  export ANTHROPIC_API_KEY=...      # and/or OPENROUTER_API_KEY (fallback / AUDITOR_PROVIDER=openrouter)
   python crux_judge.py --aug-dir ./output_2/augmented --out crux_labels.json
 """
 import argparse, json, os, glob, re, sys
 
-MODEL = "claude-opus-4-8"
+MODEL = "claude-opus-5"
 
 SYSTEM = """You identify the CRUX verifiers of a hard analytical task.
 
@@ -104,11 +104,12 @@ VERIFIERS (id: kind, value, source):
 DAG HINT: final-deliverable node(s) = {deepest}; their immediate parents = {parents}.
 
 Return the verifiers whose value the golden REPORTS AS AN ANSWER (final decision + key stated results)."""
-    msg = client.messages.create(
-        model=MODEL, max_tokens=8000, temperature=1,
-        thinking={"type": "adaptive"}, output_config={"effort": "medium"},
-        system=SYSTEM, messages=[{"role": "user", "content": user}])
-    txt = "".join(b.text for b in msg.content if getattr(b, "type", "") == "text")
+    # Anthropic direct, else the same model on OpenRouter (src/llm_route.py)
+    from src.llm_route import claude_complete
+    txt = claude_complete(user, model=MODEL, system=SYSTEM, max_tokens=8000,
+                          anthropic_extra={"temperature": 1, "thinking": {"type": "adaptive"},
+                                           "output_config": {"effort": "medium"}},
+                          effort="medium")
     txt = re.sub(r"^```(json)?|```$", "", txt.strip(), flags=re.M).strip()
     return json.loads(txt)
 
@@ -120,11 +121,7 @@ def main():
     ap.add_argument("--only", default="", help="comma-sep task ids to limit to")
     ap.add_argument("--runs", type=int, default=3, help="runs per task for stability (majority vote)")
     a = ap.parse_args()
-    try:
-        import anthropic
-    except ImportError:
-        sys.exit("pip install anthropic")
-    client = anthropic.Anthropic()
+    client = None          # provider routing lives in src/llm_route.py
 
     files = sorted(glob.glob(os.path.join(a.aug_dir, "*_augment.json")))
     only = set(t.strip() for t in a.only.split(",") if t.strip())

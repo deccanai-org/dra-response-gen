@@ -34,7 +34,7 @@ from src.verifier_audit import (
 )
 
 WORKER_MODEL = "claude-sonnet-4-6"     # cheap mechanical concerns
-CONSOLIDATOR_MODEL = "claude-opus-4-8" # cross-concern reconciliation
+CONSOLIDATOR_MODEL = "claude-opus-5" # cross-concern reconciliation
 ATOMICITY_MODEL = WORKER_MODEL         # overridden to opus if the tier test says so
 
 # ---------------------------------------------------------------------------

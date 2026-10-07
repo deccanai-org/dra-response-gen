@@ -238,7 +238,7 @@ def _decision_items(res: dict):
                       "body": (f"<b>{_esc(c.get('sme_question'))}</b><br>"
                                f"<i>{_esc(c.get('rationale'))}</i>"),
                       "meta": "NOT applied — artifact keeps its original wording"})
-    for i, v in enumerate(va.get("verifiers") or []):
+    for i, v in enumerate(va.get("verifiers") or [] if "verifier_rewrites_pending" not in res else []):
         rw = (v.get("rewrite") or "").strip()
         if not rw:
             continue
@@ -248,6 +248,16 @@ def _decision_items(res: dict):
                       "title": f"{v.get('id')} reworded ({', '.join(fails)})",
                       "body": f"<b>now:</b> {_esc(rw)}",
                       "meta": "applied in place, id unchanged"})
+    # rewrites HELD for the SME (tolerance bands; numbers that trace to nothing). NOT applied unless
+    # accepted. Safe rewordings were applied automatically and are listed, collapsed, above the cards.
+    for i, p in enumerate(res.get("verifier_rewrites_pending") or []):
+        why = ("adds or changes a tolerance band" if p.get("reason") == "tolerance" else
+               "contains numbers found nowhere in the task: " + ", ".join(p.get("untraceable_numbers") or []))
+        items.append({"id": f"rp{i}", "kind": "rewrite_proposal", "needs_answer": False,
+                      "title": f"{p.get('id')} — proposed rewording ({why})",
+                      "body": (f"<b>current:</b> {_esc(p.get('original'))}<br>"
+                               f"<b>proposed:</b> {_esc(p.get('proposed'))}"),
+                      "meta": "NOT applied — Accept applies the proposed text; Reject or no decision keeps the current"})
     # the children's text and their targets, because "V4 split into V4a, V4b, V4c"
     # with only the parent's old text shown gives no way to judge the split
     vtext, ev = {}, res.get("expected_values") or {}
@@ -461,11 +471,40 @@ def _decision_items(res: dict):
     return items
 
 
+_ANSWER_CHANGING = re.compile(r"flip|changes? Criterion|decides Criterion|from PASS|from FAIL|PROCEED|DECLINE|"
+                              r"final (line|recommendation)|not determinate|indetermin", re.I)
+
+
+def _answer_changing(c: dict) -> bool:
+    return bool(_ANSWER_CHANGING.search(f"{c.get('rationale', '')} {c.get('sme_question', '')}"))
+
+
+def _card_rank(it: dict, res: dict) -> int:
+    if it["kind"] == "question":
+        i = int(re.sub(r"\D", "", it["id"]) or 0)
+        qs = res.get("judgment_changes_pending_sme") or []
+        return 0 if i < len(qs) and _answer_changing(qs[i]) else 1
+    return {"rewrite_proposal": 2, "verdict_override": 3, "split": 4, "dedupe": 5, "gap": 6,
+            "rewrite": 7, "change": 8}.get(it["kind"], 5)
+
+
+def _auto_rewrites_block(res: dict) -> str:
+    auto = res.get("verifier_rewrites_auto_applied") or []
+    if not auto:
+        return ""
+    rows = "".join(f"<tr><td>{_esc(a.get('id'))}</td><td>{_esc(a.get('original'))}</td>"
+                   f"<td>{_esc(a.get('new'))}</td></tr>" for a in auto)
+    return (f"<details><summary>{len(auto)} verifier rewording(s) applied automatically (no tolerance "
+            f"change; every number traced to the task) — no decision needed</summary>"
+            f"<table><tr><th>Verifier</th><th>Was</th><th>Now</th></tr>{rows}</table></details>")
+
+
 def _decision_section(res: dict) -> str:
     import json as _json
     items = _decision_items(res)
     if not items:
-        return "<p><i>Nothing to decide.</i></p>"
+        return _auto_rewrites_block(res) + "<p><i>Nothing to decide.</i></p>"
+    items = sorted(items, key=lambda it: _card_rank(it, res))   # ids unchanged: apply_decisions matches by id
     cards = []
     for it in items:
         ask = ""
@@ -503,7 +542,7 @@ def _decision_section(res: dict) -> str:
             f"&nbsp;<button onclick='saveDecisions()'>Save decisions</button>"
             f"&nbsp;<span class='mono' style='font-size:12px'>run "
             f"{_esc(res.get('run_hash'))}</span></div>"
-            + "".join(cards) + js)
+            + _auto_rewrites_block(res) + "".join(cards) + js)
 
 
 def _trajectory(res: dict) -> str:
@@ -789,6 +828,14 @@ def _verdict_reason_block(res: dict, verdict: str) -> str:
     if reason:
         cls = "bad" if non_proceedable else "warn"
         return f"<p class='pill {cls}'>Reason: {_esc(reason)}</p>"
+    flips = [c for c in (res.get("judgment_changes_pending_sme") or []) if _answer_changing(c)]
+    if non_proceedable and flips:
+        items = "".join(f"<li><b>{_esc(c.get('artifact'))} — {_esc(c.get('location'))}</b>: "
+                        f"{_esc((c.get('rationale') or '')[:400])}</li>" for c in flips)
+        return ("<div class='pill bad' style='display:block;text-align:left'>&#9888; <b>Why "
+                + _esc(verdict) + f":</b> {len(flips)} open ruling(s) change a criterion or the final "
+                "answer, so a correct solver can reach a different result than the golden. Rule on these "
+                "first (they lead the Decisions section):<ul style='margin:6px 0 0'>" + items + "</ul></div>")
     if non_proceedable and not prose and not findings:
         detected = _synthesize_reason(res)
         if detected:

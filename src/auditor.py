@@ -290,6 +290,8 @@ class AuditResult:
     step_coverage_report: dict = field(default_factory=dict)
     verifier_audit: dict = field(default_factory=dict)
     verifier_splits_applied: List[dict] = field(default_factory=list)
+    # rewrites held for the SME: tolerance bands, or numbers that trace to nothing in the task
+    verifier_rewrites_pending: List[dict] = field(default_factory=list)
     verifier_rewrites_applied: List[str] = field(default_factory=list)
     target_grammar_problems: List[dict] = field(default_factory=list)
     #: Deterministic gate over the FINAL derivation. Distinct from `proceedable`,
@@ -1018,8 +1020,15 @@ def _finalize_verifier_set(result: "AuditResult", original_verifiers_text: str,
     result.verifier_audit = va.to_dict()
     if not va.error:
         if va.rewrites:
-            all_vs = apply_rewrites(all_vs, va.rewrites)
-            result.verifier_rewrites_applied = sorted(va.rewrites)
+            # tolerance rewrites and rewrites with untraceable numbers wait for the SME; the rest apply
+            from src.verifier_audit import classify_rewrites
+            _auto, _pending = classify_rewrites(
+                all_vs, va.rewrites, audited=va.verifiers,
+                trusted_text=str(result.corrected_solution_logic or ""), expected_values=ev)
+            if _auto:
+                all_vs = apply_rewrites(all_vs, _auto)
+            result.verifier_rewrites_applied = sorted(_auto)
+            result.verifier_rewrites_pending = _pending
         if va.splits:
             all_vs, ev, split_log = apply_splits(all_vs, va.splits, ev)
             result.verifier_splits_applied = split_log

@@ -36,7 +36,7 @@ from typing import Any, Dict, List, Optional
 
 from src.arithmetic_verifier import parse_number
 
-DEFAULT_MODEL = "claude-opus-4-8"
+DEFAULT_MODEL = "claude-opus-5"
 BASE_TOKENS = 16000
 PER_VERIFIER_TOKENS = 550
 #: Opus 4.8 allows 128k output tokens on the Messages API and _call_llm streams,
@@ -669,6 +669,78 @@ def audit_verifiers(
     res.splits = splits
     res.fails_by_property = fails
     return res
+
+
+# ---------------------------------------------------------------------------------------------------
+# which rewrites may be applied without the SME
+# ---------------------------------------------------------------------------------------------------
+_BAND_RE = re.compile(r"±|\+/-|\+-\s*\d|\bwithin\s+[\d.,]+|\btoleran\w*|\bband\b", re.I)
+_VID_RE = re.compile(r"\bV\d+[a-z]?\b")
+_NUM_RE = re.compile(r"(?<![A-Za-z])-?\d[\d,]*(?:\.\d+)?")
+
+
+def _nums(text: str):
+    out = []
+    for m in _NUM_RE.finditer(_VID_RE.sub(" ", str(text or ""))):
+        raw = m.group(0).replace(",", "")
+        try:
+            out.append((float(raw), len(raw.split(".")[1]) if "." in raw else 0, m.group(0)))
+        except ValueError:
+            pass
+    return out
+
+
+def _traceable(n: float, decimals: int, pool) -> bool:
+    """n matches a trusted number, allowing the rounding its own precision implies (6.8 vs 6.8123)
+    and percent/fraction form (6.8 vs 0.068)."""
+    tol = 0.5 * 10 ** (-decimals)
+    for t in pool:
+        for cand in (t, t * 100, t / 100):
+            if abs(n - cand) <= max(tol, 1e-9) or (cand and abs(n - cand) <= 0.005 * abs(cand)):
+                return True
+    return False
+
+
+def classify_rewrites(verifiers: List[dict], rewrites: Dict[str, str], audited: Optional[List[dict]] = None,
+                      trusted_text: str = "", expected_values: Optional[Dict[str, dict]] = None):
+    """Split proposed rewrites into (auto: {id: text}, pending: [dict]).
+
+    PENDING — needs the SME:
+      * tolerance: the rewrite adds or changes a tolerance band, or the audit failed the verifier on
+        'toleranced'. Choosing a band is an authorial decision.
+      * untraceable: the rewrite contains a number found nowhere in the original verifier, the expected
+        values or the corrected solution logic (CCL, 5 Oct: a rewrite wrote 'operating income 23,574'
+        where the pack prints 3,574).
+    AUTO — everything else (self-containment, falsifiability, wording) is applied without a card."""
+    orig = {v.get("id"): v.get("text", "") for v in verifiers}
+    failed_props = {}
+    for v in audited or []:
+        failed_props[v.get("id")] = [k for k, x in (v.get("properties") or {}).items()
+                                     if (x or {}).get("verdict") == "FAIL"]
+    pool = {n for n, _, _ in _nums(trusted_text)}
+    for ev in (expected_values or {}).values():
+        for k in ("value", "target", "expected", "golden"):
+            try:
+                pool.add(float(str((ev or {}).get(k)).replace(",", "")))
+            except (TypeError, ValueError):
+                pass
+    auto, pending = {}, []
+    for vid, new in (rewrites or {}).items():
+        old = orig.get(vid, "")
+        fails = failed_props.get(vid, [])
+        band_added = bool(_BAND_RE.search(new or "")) and not _BAND_RE.search(old or "")
+        if "toleranced" in fails or band_added:
+            pending.append({"id": vid, "original": old, "proposed": new, "reason": "tolerance",
+                            "properties_failed": fails})
+            continue
+        local = pool | {n for n, _, _ in _nums(old)}
+        bad = [raw for n, d, raw in _nums(new) if not _traceable(n, d, local)]
+        if bad:
+            pending.append({"id": vid, "original": old, "proposed": new, "reason": "untraceable",
+                            "untraceable_numbers": bad, "properties_failed": fails})
+            continue
+        auto[vid] = new
+    return auto, pending
 
 
 def apply_rewrites(verifiers: List[dict], rewrites: Dict[str, str]) -> List[dict]:

@@ -687,7 +687,7 @@ def _pick_representative(run_jsons: List[dict]) -> Tuple[int, dict]:
 
 
 def build_sme_package(final: dict, adj: Adjudication,
-                      run_jsons: Optional[List[dict]] = None) -> dict:
+                      run_jsons: Optional[List[dict]] = None, resplit: bool = False) -> dict:
     """Option A: use a representative run's TRAJECTORY (claims, judgment steps,
     DAG skeleton) as a coherent whole, overlay the ADJUDICATED (merged) verifier
     set onto it, and apply the value overrides and majority verdict on top.
@@ -800,6 +800,22 @@ def build_sme_package(final: dict, adj: Adjudication,
         _apply_overrides_to_claims(pkg, adj)
         _apply_overrides_to_verifier_text(pkg, adj)
 
+    # Re-atomise the consensus verifier set (src/post_adjudication_split.py). Its docstring places it
+    # here — after the merge sets augmented_verifiers_text, before derive_frozen_graph — but it was
+    # never called, so compound verifiers the merge left behind reached the SME unsplit. LLM mode only.
+    if resplit and (pkg.get("augmented_verifiers_text") or "").strip():
+        try:
+            from src.post_adjudication_split import resplit_adjudicated
+            pkg = resplit_adjudicated(pkg)
+        except Exception as e:                                   # noqa: BLE001
+            adj.notes.append(f"post-adjudication re-split skipped: {type(e).__name__}: {e}")
+    else:
+        # no re-split: the representative run's held rewrites use ids the merge renumbered. They were
+        # never applied, so dropping them leaves the merged text unchanged (no tolerance band added).
+        if pkg.get("verifier_rewrites_pending"):
+            adj.notes.append(f"{len(pkg['verifier_rewrites_pending'])} per-run held rewrite(s) not carried "
+                             f"(ids renumbered by the merge; re-split did not run)")
+        pkg["verifier_rewrites_pending"] = []
     try:
         from src.augment_task import derive_frozen_graph
         pkg = derive_frozen_graph(pkg, compute_shapley=True)

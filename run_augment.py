@@ -98,7 +98,7 @@ def _adjudicate_task(run_dir_base, manifest, model, no_llm=False, no_html=False)
     # value overrides applied and structure re-derived). Save THAT as JSON and
     # render THAT as HTML, so adjudicated.json and adjudicated.html describe the
     # same object — with the full dag / crux / shapley, not the thin merge.
-    pkg = build_sme_package(final, adj, run_jsons=run_jsons)
+    pkg = build_sme_package(final, adj, run_jsons=run_jsons, resplit=judge is not None)
     # prefix outputs with the task id so files are self-identifying once moved out
     # of their per-task folder (e.g. {task}_adjudicated.json, not adjudicated.json).
     tid = manifest.get("task_id") or os.path.basename(run_dir_base.rstrip("/"))
@@ -122,49 +122,24 @@ def _adjudicate_task(run_dir_base, manifest, model, no_llm=False, no_html=False)
 
 
 def rows_from_json(paths):
-    """Build (headers, rows) from deep-case package JSON(s), matching the CSV row-dict shape so the
-    existing pipeline runs unchanged. Verifiers / solution logic are rendered to the text columns the
-    auditor parses; a `json` column carries the absolute package path so audit_task reads full text
-    straight from the JSON (no CSV cell limit)."""
+    """Build (headers, rows) from deep-case package JSON(s) with the SAME renderer the synthesizer's
+    deepcase/to_csv.py uses (src/synth_row.package_to_row), so --json and --csv give the auditor
+    identical rows: trap values, anchors, verifier dependencies, Sub-Domain and Task Focus included.
+    The Drive link comes from draft.drive_link (written there by to_csv's upload). The `json` column is
+    provenance only — the audit reads the rendered columns, exactly as in --csv mode."""
     import json as _json, glob as _glob, os as _os
-    headers = ["task_id","prompt_id","Primary Prompt Type","Secondary Prompt Type","Prompt",
-               "Sanity Check","Solution Logic","Drive Link","Verifiers","Estimated Time",
-               "Sub-Domain","Task Focus","json"]
-    def _claims_text(cl):
-        out=[]
-        for c in cl:
-            ins=", ".join(f"{i.get('name')}={i.get('value')}" for i in (c.get('inputs') or []))
-            out.append(f"{c.get('id')} — {c.get('label','')}: {c.get('operation','')} = "
-                       f"{c.get('claimed_result','')}" + (f" [inputs: {ins}]" if ins else "")
-                       + (f" (source: {c.get('source','')})" if c.get('source') else ""))
-        return "\n".join(out)
-    def _vers_text(vs):
-        out=[]
-        for v in vs:
-            crux=" [crux]" if v.get("crux") else ""
-            out.append(f"{v.get('id')}{crux}: {v.get('check','')}")
-        return "\n".join(out)
-    rows=[]
-    expanded=[]
+    from src.synth_row import HEADERS, package_to_row
+    rows = []
+    expanded = []
     for p in paths:
         expanded += _glob.glob(p) or [p]
     for p in expanded:
-        pkg=_json.load(open(p, encoding="utf-8"))
-        dr=pkg.get("draft", pkg)
-        prompt=dr.get("prompt","")
-        rules=dr.get("governing_rules",[])
-        if rules:
-            prompt=prompt.rstrip()+"\n\nSourcing conventions:\n"+"\n".join(f"- {r}" for r in rules)
-        rows.append({
-            "task_id": dr.get("task_id",""),
-            "prompt_id": "", "Primary Prompt Type": dr.get("prompt_type","FSP"),
-            "Secondary Prompt Type": "LDP", "Prompt": prompt, "Sanity Check": "",
-            "Solution Logic": _claims_text(dr.get("solution_logic",[])),
-            "Drive Link": "", "Verifiers": _vers_text(dr.get("verifiers",[])),
-            "Estimated Time": "", "Sub-Domain": dr.get("sub_domain",""), "Task Focus": "",
-            "json": _os.path.abspath(p),
-        })
-    return headers, rows
+        pkg = _json.load(open(p, encoding="utf-8"))
+        dr = pkg.get("draft", pkg)
+        link = dr.get("drive_link", "") or pkg.get("drive_link", "") or ""
+        rows.append(package_to_row(pkg if "draft" in pkg else {"draft": dr}, drive_link=link,
+                                   json_path=_os.path.abspath(p)))
+    return list(HEADERS), rows
 
 
 def load_rows(path):
@@ -369,9 +344,15 @@ def main():
                     {"run": k, "json": jpath,
                      "verdict": rd_k.get("audit_verdict"),
                      "scoreable": rd_k.get("scoreable"),
-                     "gate_ok": bool((rd_k.get("gate") or {}).get("passed"))})
+                     "gate_ok": bool((rd_k.get("gate") or {}).get("passed")),
+                     "audit_error": rd_k.get("audit_error", "")})
+                _why = rd_k.get("audit_error", "")
+                if _why:
+                    _why = (f" | audit error: {_why[:140]}"
+                            + (f" [response {rd_k.get('audit_raw_response_len', 0):,} chars, looks truncated]"
+                               if rd_k.get("audit_likely_truncated") else ""))
                 print(f"    run {k}/{args.runs}: {rd_k.get('audit_verdict')} "
-                      f"| crux {len(rd_k.get('crux_ids', []))}")
+                      f"| crux {len(rd_k.get('crux_ids', []))}{_why}")
             # per-task manifest the adjudicator consumes
             mpath = os.path.join(run_dir_base, "runs_manifest.json")
             json.dump(manifest, open(mpath, "w", encoding="utf-8"),

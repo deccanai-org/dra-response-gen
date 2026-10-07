@@ -66,6 +66,11 @@ AUGMENT_MAX_TOKENS = 32000
 class AugmentResult:
     task_id: str
     audit_verdict: str = ""
+    # why the AUDIT itself failed, when it did (auditor call error / unparseable or truncated response).
+    # Previously computed by the auditor and dropped here, so an AUDIT_FAILED run recorded no cause.
+    audit_error: str = ""
+    audit_raw_response_len: int = 0
+    audit_likely_truncated: bool = False
     # Verified arithmetic, carried through instead of discarded. These are the
     # trajectory's only input (src/trajectory.py) and re-deriving them costs an
     # Opus call, so they belong in the persisted package.
@@ -128,6 +133,7 @@ class AugmentResult:
     #: [{parent, children, target_went_to, parent_text}] — splits APPLIED. Children
     #: take suffixed ids (V5 -> V5a, V5b) so no existing id is renumbered.
     verifier_splits_applied: List[dict] = field(default_factory=list)
+    verifier_rewrites_pending: List[dict] = field(default_factory=list)
     corrected_claim_verdicts: List[dict] = field(default_factory=list)
     judgment_steps: List[dict] = field(default_factory=list)
     gate: dict = field(default_factory=dict)
@@ -572,6 +578,9 @@ def augment_task(
                            # so it must know which files it never saw
                            skipped_inputs=skipped_inputs)
     res.audit_verdict = audit.verdict
+    res.audit_error = getattr(audit, "error", "") or ""
+    res.audit_raw_response_len = int(getattr(audit, "raw_response_len", 0) or 0)
+    res.audit_likely_truncated = bool(getattr(audit, "likely_truncated", False))
     res.claim_verdicts = list(audit.claim_verdicts or [])
     res.input_coverage = dict(audit.input_coverage or {})
     res.arithmetic_summary = dict(audit.arithmetic_summary or {})
@@ -693,6 +702,7 @@ def augment_task(
     # temporal/coverage gates see them
     res.verifier_audit = dict(audit.verifier_audit or {})
     res.verifier_splits_applied = list(audit.verifier_splits_applied or [])
+    res.verifier_rewrites_pending = list(getattr(audit, "verifier_rewrites_pending", []) or [])
     res.verifier_rewrites_applied = list(audit.verifier_rewrites_applied or [])
     res.target_grammar_problems = list(audit.target_grammar_problems or [])
 

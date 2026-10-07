@@ -75,7 +75,7 @@ def main(argv=None):
 
     # save the assembled SME package (full structure) as JSON, and render the
     # same object as HTML, so the two files agree
-    pkg = build_sme_package(final, adj, run_jsons=run_jsons)
+    pkg = build_sme_package(final, adj, run_jsons=run_jsons, resplit=judge is not None)
     with open(f"{args.out}.json", "w") as f:
         json.dump(pkg, f, indent=1, default=str)
     with open(f"{args.out}.html", "w") as f:

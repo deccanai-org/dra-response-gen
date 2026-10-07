@@ -67,7 +67,7 @@ def _rate_limit_delay():
 
 
 # Default judge model for the auditor + rubric scorer.
-DEFAULT_JUDGE_MODEL = "claude-opus-4-8"
+DEFAULT_JUDGE_MODEL = "claude-opus-5"
 
 # NOTE on the judge pool and self-evaluation bias:
 #   The original pipeline excluded Claude and Gemini from the judge pool because
@@ -75,7 +75,7 @@ DEFAULT_JUDGE_MODEL = "claude-opus-4-8"
 #   RESPONSES would be self-evaluation. The task auditor and prompt-quality
 #   scorer do something different: they assess TASK validity (arithmetic,
 #   leakage, trap structure, prompt quality), not agent responses. That is
-#   prompt-QC, not response-scoring, so Claude (Opus 4.8) is admissible here.
+#   prompt-QC, not response-scoring, so Claude (Opus 5) is admissible here.
 #   Gemini/DeepSeek remain excluded for response scoring elsewhere.
 #
 # Fallback chains for the open-weight Together judges only. The Claude judge
@@ -83,8 +83,10 @@ DEFAULT_JUDGE_MODEL = "claude-opus-4-8"
 # hard-stop rather than silently degrade to a weaker, different-family judge.
 # Mixing judge models within a single benchmark run would contaminate results
 # in a way that is hard to detect after the fact, so we fail loudly instead.
+# PROVIDER fallback is different and allowed: src/llm_route.py serves the SAME
+# Claude model through OpenRouter when Anthropic is down or over its spend cap.
 MODEL_FALLBACK_CHAIN = {
-    "claude-opus-4-8": [],
+    "claude-opus-5": [],
     "Qwen/Qwen3-235B-A22B-Instruct-2507-tput": [
         "meta-llama/Llama-3.3-70B-Instruct-Turbo",
     ],
@@ -134,28 +136,15 @@ def _call_llm(prompt: str, model_name: str, max_tokens: int = 4000,
                 _rate_limit_delay()
 
                 if current_model.startswith("claude-"):
-                    import anthropic
-                    client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-                    # Opus 4.7/4.8 removed sampling params (temperature, budget_tokens)
-                    # and use adaptive thinking only — do NOT pass temperature here.
-                    # We STREAM: the SDK requires streaming for requests whose
-                    # max_tokens is large enough to risk a >10-min response, and
-                    # streaming also means partial output isn't lost on interruption.
-                    create_kwargs = {
-                        "model": current_model,
-                        "max_tokens": max_tokens,
-                        "messages": [{"role": "user", "content": prompt}],
-                    }
-                    if system_prompt:
-                        create_kwargs["system"] = system_prompt
-                    text_parts = []
-                    with client.messages.stream(**create_kwargs) as stream:
-                        for text in stream.text_stream:
-                            text_parts.append(text)
+                    # Anthropic direct, else the SAME model through OpenRouter (src/llm_route.py).
+                    # Both providers stream; Opus 5 takes no sampling params here (as before).
+                    from src.llm_route import claude_complete
+                    text = claude_complete(prompt, model=current_model, system=system_prompt,
+                                           max_tokens=max_tokens)
                     _last_model_used = current_model
                     if model_idx > 0:
                         print(f"  → Using fallback model: {current_model}")
-                    return "".join(text_parts)
+                    return text
                 elif "gemini" in current_model.lower():
                     import google.generativeai as genai
                     if system_prompt:

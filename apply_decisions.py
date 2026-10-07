@@ -377,9 +377,12 @@ def _items(pkg):
     for i, c in enumerate(pkg.get("judgment_changes_pending_sme") or []):
         out.append({"id": f"q{i}", "kind": "question", "payload": c})
     va = pkg.get("verifier_audit") or {}
-    for i, v in enumerate(va.get("verifiers") or []):
+    for i, v in enumerate(va.get("verifiers") or [] if "verifier_rewrites_pending" not in pkg else []):
         if (v.get("rewrite") or "").strip():
             out.append({"id": f"rw{i}", "kind": "rewrite", "payload": v})
+    # rewrites held for the SME (same ids as augment_report: rp0, rp1, ...)
+    for i, p in enumerate(pkg.get("verifier_rewrites_pending") or []):
+        out.append({"id": f"rp{i}", "kind": "rewrite_proposal", "payload": p})
     for i, x in enumerate(pkg.get("verifier_splits_applied") or []):
         out.append({"id": f"sp{i}", "kind": "split", "payload": x})
     # coverage gaps MUST be built from the same deterministic
@@ -481,7 +484,8 @@ def apply_decisions(pkg: dict, dec: dict, force: bool = False) -> dict:
         a = (answers.get(it["id"]) or "").strip()
         if not c:
             incomplete.append(f"{it['id']} undecided")
-        elif c != "accept" and not a:
+        elif c != "accept" and not a and not (it["kind"] == "rewrite_proposal" and c == "reject"):
+            # declining a held rewrite keeps the current wording: no reason required
             incomplete.append(f"{it['id']} {c} with no reason")
         elif it["kind"] == "question" and not a:
             incomplete.append(f"{it['id']} question unanswered")
@@ -674,6 +678,20 @@ def apply_decisions(pkg: dict, dec: dict, force: bool = False) -> dict:
                 vmap[vid] = reason
                 log.append({"item": cid, "action": "verifier_replaced_by_sme",
                             "verifier": vid, "text": reason})
+
+        elif kind == "rewrite_proposal":
+            # held rewrite (tolerance band / untraceable numbers): applies ONLY on accept
+            vid = pay.get("id")
+            if choice == "accept":
+                vmap[vid] = pay.get("proposed", vmap.get(vid, ""))
+                log.append({"item": cid, "action": "rewrite_proposal_applied", "verifier": vid,
+                            "reason": pay.get("reason")})
+            elif choice == "reject":
+                log.append({"item": cid, "action": "rewrite_proposal_declined", "verifier": vid,
+                            "reason": reason})
+            else:
+                vmap[vid] = reason
+                log.append({"item": cid, "action": "verifier_replaced_by_sme", "verifier": vid, "text": reason})
 
         elif kind == "split":
             if choice == "reject":

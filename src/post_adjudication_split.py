@@ -84,10 +84,22 @@ def resplit_adjudicated(pkg: dict, provider: Optional[callable] = None) -> dict:
          else pkg.update({"post_adjudication_resplit": _note}))
         return pkg
 
-    # apply rewrites then splits, exactly as the auditor does
+    # rewrites: apply only the safe ones; tolerance bands and untraceable numbers go to the SME as
+    # proposals in THIS (merged, final) id space — per-run proposals use ids the merge renumbered
     n_before = len(verifiers)
+    pkg["verifier_rewrites_pending"] = []
+    pkg["verifier_rewrites_auto_applied"] = []
     if va.rewrites:
-        verifiers = apply_rewrites(verifiers, va.rewrites)
+        from src.verifier_audit import classify_rewrites
+        _auto, _pending = classify_rewrites(
+            verifiers, va.rewrites, audited=getattr(va, "verifiers", None),
+            trusted_text=sol, expected_values=ev)
+        _orig = {v["id"]: v["text"] for v in verifiers}
+        if _auto:
+            verifiers = apply_rewrites(verifiers, _auto)
+        pkg["verifier_rewrites_auto_applied"] = [{"id": k, "original": _orig.get(k, ""), "new": t}
+                                                for k, t in _auto.items()]
+        pkg["verifier_rewrites_pending"] = _pending
     dropped = []
     if va.duplicate_clusters:
         # drop the restated verifier(s) each cluster recommends removing (MECE dedupe)
