@@ -170,11 +170,11 @@ def _author_gap_verifier(step_id: str, step: dict) -> str:
         v = step["value"]
         try:
             fv = float(v)
-            vs = str(int(fv)) if fv == int(fv) else f"{fv:.4g}"
+            vs = f"{int(fv):,}" if fv == int(fv) else f"{fv:.4g}"
         except (TypeError, ValueError):
             vs = str(v)
-        return (f"The response computes {label} = {vs} "
-                f"(within tolerance). FAIL IF absent or a different value.")
+        # no tolerance wording: a band is the SME's decision (held rewrites), not the gap author's
+        return f"The response computes {label} = {vs} at the stated precision; any other value fails."
     if step.get("kind") == "judgment":
         return (f"The response explicitly resolves: {label} — with the "
                 f"conclusion the solution logic reaches. FAIL IF the step is "
@@ -488,6 +488,14 @@ def _card_rank(it: dict, res: dict) -> int:
             "rewrite": 7, "change": 8}.get(it["kind"], 5)
 
 
+def _sme_ready_block(res: dict) -> str:
+    """Everything src/sme_ready.py applied automatically, collapsed above the decision cards."""
+    if not res.get("sme_ready"):
+        return ""
+    from src.sme_ready import auto_block_html
+    return auto_block_html(res["sme_ready"])
+
+
 def _auto_rewrites_block(res: dict) -> str:
     auto = res.get("verifier_rewrites_auto_applied") or []
     if not auto:
@@ -503,7 +511,7 @@ def _decision_section(res: dict) -> str:
     import json as _json
     items = _decision_items(res)
     if not items:
-        return _auto_rewrites_block(res) + "<p><i>Nothing to decide.</i></p>"
+        return _sme_ready_block(res) + _auto_rewrites_block(res) + "<p><i>Nothing to decide.</i></p>"
     items = sorted(items, key=lambda it: _card_rank(it, res))   # ids unchanged: apply_decisions matches by id
     cards = []
     for it in items:
@@ -542,7 +550,7 @@ def _decision_section(res: dict) -> str:
             f"&nbsp;<button onclick='saveDecisions()'>Save decisions</button>"
             f"&nbsp;<span class='mono' style='font-size:12px'>run "
             f"{_esc(res.get('run_hash'))}</span></div>"
-            + _auto_rewrites_block(res) + "".join(cards) + js)
+            + _sme_ready_block(res) + _auto_rewrites_block(res) + "".join(cards) + js)
 
 
 def _trajectory(res: dict) -> str:

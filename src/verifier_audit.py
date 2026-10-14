@@ -33,6 +33,7 @@ import json
 import re
 from dataclasses import dataclass, field, asdict
 from typing import Any, Dict, List, Optional
+from src.atomic_rules import ATOMICITY_BLOCK
 
 from src.arithmetic_verifier import parse_number
 
@@ -108,49 +109,8 @@ target; a child that carries none is not eligible for the crux set, which is the
 correct outcome for a structural check.\
 """
 
-PROPERTY_SPEC = """\
-=== ATOMIC ===
-One verifier, one assertion. ONE ASSERTION = ONE PREDICATE ON ONE REFERENT, WHERE
-THE REFERENT MAY BE A NAMED SET.
-  atomic:     "the bridge contains exactly these 7 rows, in order: (1)... (7)..."
-              — one predicate ("contains exactly, in order") on an enumerated set
-  NOT atomic: "bridge has 7 rows AND row 3 is X AND row 4 is Y" — three assertions
-Do NOT flag: a number that is part of the single target's derivation ("= 162,532.41
-(4.0% of FY2025 labour)"); a unit or window ("240 tickets in 4 hours"); a number
-inside a label ("Phase 2", "2-wheeler", "FY2025"); or a fail-if half plus a target
-half of the SAME quantity.
-
-THE SET CASE — DECIDE IT WITH THIS TEST, NOT BY FEEL.
-"the referent may be a named set" is ambiguous on its own: "allocation: PC = 2.565,
-Filtration = 1.215, IC = 1.620" reads as one predicate over a three-member set AND
-as three assertions, and both are defensible. That ambiguity made the same verifier
-pass as atomic on one run and split three ways on the next. Resolve it by asking:
-
-    IS A PARTIAL FAILURE WORTH ATTRIBUTING?
-
-  * NO -> atomic. "contains exactly these 7 rows, in order" — a response either
-    produced the right bridge or it did not; knowing which row is wrong buys the
-    grader nothing, because the bridge is the unit of correctness.
-  * YES -> NOT atomic, split it. If any single member carries diagnostic weight of
-    its own, bundling makes a response that gets one member wrong and the rest
-    right unscoreable in either direction.
-
-A member carries diagnostic weight when it is any of:
-  * the TRAP element — the one a shallow solver gets wrong. You are given each
-    step's trap value; if a member matches or relates to one, the set MUST split.
-  * a DECISION, or an input to one, where members can disagree (two segments
-    flagged and one not).
-  * separately reported in the deliverable, so a grader could observe one member
-    without the others.
-
-Worked example, from a real task: overhead allocated across three segments where
-the whole trap is that the obsolete driver wrongly pushes ONE segment below the
-threshold. That segment's figure is the discriminating fact. Bundled, a response
-that gets it wrong and the other two right cannot be graded correctly. SPLIT.
-
-Counter-example: a bridge table's seven rows, where the task is to reconcile the
-bridge. No single row is the trap and none is reported alone. ATOMIC.
-
+# The ATOMIC section is the shared definition (src/atomic_rules.py) — the split worker uses the same text.
+PROPERTY_SPEC = "=== ATOMIC ===\n" + ATOMICITY_BLOCK + "\n" + """\
 === QUANTIFIABLE ===
 The target is drawn from a stated, finite, checkable set. NOT "must be a number":
   numeric   — a number with a band
@@ -773,6 +733,76 @@ def _vnum(vid: str) -> int:
     return int(m.group(1)) if m else 10 ** 6
 
 
+_SPLIT_TRAP = re.compile(r"^\s*(?:reporting|stating|a response (?:that )?reports?)\s+(.+?)\s+fails\b|"
+                         r"\bdoes not report\b|\bmust not (?:use|report)\b|\(trap value", re.I)
+_SPLIT_TRAP_VAL = re.compile(r"^\s*(?:reporting|stating|a response (?:that )?reports?)\s+(.+?)\s+fails\b", re.I)
+_SHOW_WORK_CLAUSES = [r",?\s*with inputs,? sources,? and formula shown", r",?\s*with inputs and sources? shown",
+                      r",?\s*inputs,? (?:sources? )?and (?:formula|source)s? shown", r",?\s*with (?:the )?component lines cited",
+                      r",?\s*with (?:the )?source(?:s)? cited", r",?\s*with (?:the )?formula shown",
+                      r",?\s*with (?:the |their |its )?sources? and (?:the )?formula shown"]
+_SPLIT_BAND = re.compile(r"\s*\((?:±|\+/-)\s*[\d.,]+\s*(?:pp|%|x|K|M|bps?)?\)|\s*(?:±|\+/-)\s*[\d.,]+\s*(?:pp|%|x|K|M|bps?)?", re.I)
+SHOW_WORK_TEXT = ("For every figure the response reports, it states the inputs used and the source document "
+                  "each input comes from.")
+
+
+def _split_subject(text: str) -> str:
+    s = re.split(r"\s=\s|\s+(?:is|equals)\s+-?[\d$]", str(text or ""), maxsplit=1)[0]
+    for b in _SHOW_WORK_CLAUSES:
+        s = re.sub(b, "", s, flags=re.I)
+    return s.strip(" ,;:.")
+
+
+def _guard_children(parent_text: str, parent_target, children: List[dict]):
+    """Deterministic guards on an LLM split (atomicity rules, src/atomic_rules.py CHILD_RULES):
+    the heir is the child stating the parent's value; trap children carry no target and name their
+    subject; no child keeps a show-your-work clause; a band the split ADDED is taken out and held for the
+    SME. Returns (children, heir, notes)."""
+    notes = {"show_work_removed": [], "held_bands": [], "subject_added": [], "heir_reassigned": False}
+    kids = [dict(c) for c in children]
+    for c in kids:
+        t0 = c["text"]; t = t0
+        for b in _SHOW_WORK_CLAUSES:
+            t = re.sub(b, "", t, flags=re.I)
+        t = re.sub(r",?\s*\bwith\s*(?=[.;,]|$)", "", t).strip()
+        if t != t0:
+            notes["show_work_removed"].append(c["suffix"])
+        if _SPLIT_BAND.search(t) and not _SPLIT_BAND.search(str(parent_text or "")):
+            stripped = re.sub(r"\s{2,}", " ", _SPLIT_BAND.sub("", t)).strip()
+            notes["held_bands"].append({"suffix": c["suffix"], "original": stripped, "proposed": t})
+            t = stripped
+        c["text"] = t
+        c["_trap"] = bool(_SPLIT_TRAP.search(t))
+    value_kids = [c for c in kids if not c["_trap"]]
+    subj = next((_split_subject(c["text"]) for c in value_kids if "=" in c["text"]), "") or _split_subject(parent_text)
+    for c in kids:
+        if c["_trap"]:
+            m = _SPLIT_TRAP_VAL.search(c["text"])
+            if subj and m and subj.lower()[:25] not in c["text"].lower():
+                c["text"] = f"The response does not report {subj} as {m.group(1).strip()}."
+                notes["subject_added"].append(c["suffix"])
+            c["inherits_target"] = False
+            c["target"] = None
+    heir = None
+    pv = None
+    try:
+        pv = float((parent_target or {}).get("value")) if isinstance(parent_target, dict) else None
+    except (TypeError, ValueError):
+        pv = None
+    if pv is not None:
+        for c in value_kids:
+            nums = [float(x.replace(",", "")) for x in re.findall(r"-?\d[\d,]*\.?\d*", c["text"]) if x.replace(",", "").replace(".", "").lstrip("-").isdigit()]
+            if any(abs(n - pv) <= max(0.005 * abs(pv), 1e-9) or abs(n * 100 - pv) <= max(0.005 * abs(pv), 1e-9) for n in nums):
+                heir = c; break
+    llm_heir = next((c for c in kids if c.get("inherits_target")), None)
+    if heir is None:
+        heir = llm_heir if llm_heir is not None and not llm_heir["_trap"] else next((c for c in value_kids if "=" in c["text"]), None)
+    notes["heir_reassigned"] = heir is not llm_heir
+    for c in kids:
+        c["inherits_target"] = c is heir
+        c.pop("_trap", None)
+    return kids, heir, notes
+
+
 def apply_splits(verifiers: List[dict], splits: Dict[str, List[dict]],
                  expected_values: Dict[str, dict]):
     """Replace each split parent with suffixed children, in place in the ordering.
@@ -786,6 +816,7 @@ def apply_splits(verifiers: List[dict], splits: Dict[str, List[dict]],
     Returns (verifiers, expected_values, log).
     """
     out, ev, log = [], dict(expected_values or {}), []
+    held_all, show_work_needed = [], False
     for v in verifiers:
         vid = v.get("id")
         children = (splits or {}).get(vid)
@@ -793,7 +824,11 @@ def apply_splits(verifiers: List[dict], splits: Dict[str, List[dict]],
             out.append(dict(v))
             continue
         parent_target = ev.pop(vid, None)
-        heir = next((c for c in children if c.get("inherits_target")), None)
+        children, heir, guard = _guard_children(v.get("text", ""), parent_target, children)
+        held_all.extend({"id": f"{vid}{h['suffix']}", "original": h["original"], "proposed": h["proposed"],
+                         "reason": "tolerance"} for h in guard["held_bands"])
+        if guard["show_work_removed"]:
+            show_work_needed = True
         made, targetless, temporal_unpinned = [], [], []
         for c in children:
             cid = f"{vid}{c['suffix']}"
@@ -821,7 +856,14 @@ def apply_splits(verifiers: List[dict], splits: Dict[str, List[dict]],
                     # temporal_drift defect created after Call 1's screen, so it
                     # is surfaced here for the SME to pin before sealing
                     "temporal_unpinned_children": temporal_unpinned,
-                    "parent_text": v.get("text", "")[:120]})
+                    "parent_text": v.get("text", ""), "guards": guard})
+    if show_work_needed and not any("states the inputs used" in str(x.get("text", "")) for x in out):
+        nid = f"V{max([_vnum(x['id']) for x in out] + [0]) + 1}"
+        out.append({"id": nid, "text": SHOW_WORK_TEXT, "added_by": "split_guard"})
+        log.append({"parent": None, "children": [nid], "note": "one response-level show-your-work verifier "
+                    "replaces the clauses removed from split children"})
+    if held_all:
+        log.append({"parent": None, "children": [], "held_bands": held_all})
     out.sort(key=lambda x: (_vnum(x["id"]), x["id"]))
     return out, ev, log
 

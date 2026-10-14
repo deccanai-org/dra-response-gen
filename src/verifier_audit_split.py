@@ -42,21 +42,16 @@ ATOMICITY_MODEL = WORKER_MODEL         # overridden to opus if the tier test say
 # where the judgment needs them.
 # ---------------------------------------------------------------------------
 
+from src.atomic_rules import ATOMICITY_BLOCK
+
 _ATOMICITY_SYS = "You audit verifier ATOMICITY only. One job. Output only the JSON."
-_ATOMICITY_TMPL = """\
-For EACH verifier below decide if it is ATOMIC: ONE predicate on ONE referent (the referent may be a
-named set). If it bundles more than one separately-attributable assertion, SPLIT it.
-
-DECISIVE RULE — a verifier MUST split if any member carries diagnostic weight of its own:
-  * it names a TRAP / fail-if / "must NOT use" value (each such verifier's trap is listed inline);
-  * it bundles a VALUE and a source-selection DECISION (e.g. "use the 10-Q figure, not the S-1");
-  * it states several separately-reported figures (e.g. "LT debt X - cash Y = net debt Z").
-Do NOT split: a number that is part of the single target's derivation, a unit/window, a number in a
-label, or a fail-if half plus a target half of the SAME quantity.
-
-A split keeps the parent number with letter suffixes (V5 -> V5a, V5b). Exactly ONE child inherits the
-parent's frozen target (inherits_target true); any OTHER child that states a number needs its own
-"target": {{"value":..,"tol":..}}. A purely structural child ("row present") may be targetless.
+# The definition is the shared one (src/atomic_rules.py), identical to the per-run audit's ATOMIC section.
+_ATOMICITY_TMPL = ("For EACH verifier below decide if it is ATOMIC and, if not, SPLIT it.\n\n"
+                   + ATOMICITY_BLOCK + """
+MECHANICS: a split keeps the parent number with letter suffixes (V5 -> V5a, V5b). Exactly ONE child inherits
+the parent's frozen target (inherits_target true) — the child that STATES the parent's value. A trap child
+declares no target. Any other child that states a number needs its own "target": {{"value":..,"tol":..}}.
+A purely structural child ("row present") may be targetless.
 
 VERIFIERS (with each one's trap value, if any, inline):
 {verifiers_with_traps}
@@ -65,7 +60,7 @@ Output ONLY this JSON:
 {{"verifiers":[{{"id":"V1","atomic":true|false,
   "split_into":[{{"text":"child condition, no reasoning","suffix":"a","inherits_target":true}},
                 {{"text":"...","suffix":"b","inherits_target":false,"target":{{"value":0,"tol":0}}}}]}}]}}
-An empty split_into means atomic. Every id must appear."""
+An empty split_into means atomic. Every id must appear.""")
 
 _PROPS_SYS = "You audit verifier PROPERTIES and reword defects. Output only the JSON."
 _PROPS_TMPL = """\
@@ -187,6 +182,39 @@ def _call(provider, model, sysmsg, prompt, max_tokens=8000):
         return obj or {}
     except Exception:
         return {}
+
+
+def atomicity_decide(verifiers, expected_values, verifier_to_step, model, provider=None, max_tokens=16000,
+                     return_verdicts=False):
+    """The specialist atomicity judgment alone (one call, shared rules in src/atomic_rules.py).
+    -> {verifier id: [children]} in apply_splits' format, or None if the call failed (the caller then
+    keeps the all-in-one audit's splits). Used per run by the auditor (Oct 2026): the all-in-one property
+    audit under-applies atomicity."""
+    if not verifiers:
+        return {}
+    if provider is None:
+        from src.prompt_evaluator import _call_llm
+        def provider(p, sysmsg, mdl, mt):                      # noqa: E306
+            return _call_llm(p, mdl, max_tokens=mt, system_prompt=sysmsg)
+    atom = _call(provider, model, _ATOMICITY_SYS, _ATOMICITY_TMPL.format(
+        verifiers_with_traps=_verifiers_with_traps(verifiers, expected_values, verifier_to_step)),
+        max_tokens=max_tokens)
+    rows = atom.get("verifiers") if isinstance(atom, dict) else None
+    if not isinstance(rows, list) or not rows:
+        return (None, None) if return_verdicts else None
+    out, verdicts = {}, {str(v.get("id")): bool(v.get("atomic")) and not (v.get("split_into") or []) for v in rows}
+    for v in rows:
+        sp = []
+        for i, child in enumerate(v.get("split_into") or []):
+            child = child or {}
+            txt = str(child.get("text") or "").strip()
+            if txt:
+                sp.append({"suffix": str(child.get("suffix") or "abcdefgh"[i:i+1] or str(i)), "text": txt,
+                           "inherits_target": bool(child.get("inherits_target")),
+                           "target": (dict(child["target"]) if isinstance(child.get("target"), dict) and child["target"] else None)})
+        if len(sp) >= 2:
+            out[str(v.get("id"))] = sp
+    return (out, verdicts) if return_verdicts else out
 
 
 def audit_verifiers_split(

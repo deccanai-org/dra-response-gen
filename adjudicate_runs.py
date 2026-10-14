@@ -29,6 +29,7 @@ adjudicator itself reproducible, run it K times and majority-vote its outputs
 callable, so the module is fully testable without a live model.
 """
 from __future__ import annotations
+import os
 
 #: Verifier-id pattern — classic (V1, V5a) and semantic (V_P1_pat_2004) ids.
 _VID = r"V(?:\d+[a-z]?|_[A-Za-z0-9][A-Za-z0-9_.]*)"
@@ -823,6 +824,15 @@ def build_sme_package(final: dict, adj: Adjudication,
         pkg["error"] = f"adjudicated re-derivation failed: {e}"
     pkg["_adjudication"] = adj.to_dict()
     pkg["adjudicated"] = True
+    # Apply every auto-approvable item and leave the SME only genuine judgements (src/sme_ready.py).
+    # Skipped for a render-only rebuild of an already SME-ready package, and when SME_READY=0.
+    if os.environ.get("SME_READY", "1") != "0" and not pkg.get("sme_ready"):
+        try:
+            from src.sme_ready import make_sme_ready
+            pkg = make_sme_ready(pkg)
+        except Exception as e:                                   # noqa: BLE001
+            adj.notes.append(f"SME-ready pass skipped: {type(e).__name__}: {e}")
+            pkg["_adjudication"] = adj.to_dict()
     return pkg
 
 

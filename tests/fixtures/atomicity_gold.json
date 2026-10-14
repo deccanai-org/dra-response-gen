@@ -1,0 +1,3201 @@
+{
+ "about": "Atomicity gold labels (Oct 2026) from the SME rubric (src/atomic_rules.py). Sources: original compiled verifiers of 10 EDGAR tasks (rule labels, reliable on template text) + judged list/structural cases incl. DHX + 2 manual. DHX free-text verifiers excluded unless judged: rule labels miss their trap phrasings.",
+ "cases": [
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V39",
+   "text": "The deliverable includes Committee memo (memo).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A001"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V22",
+   "text": "Current portion of long-term debt on the face of the consolidated balance sheet at November 30, 2025 (value, positive liability amount) = 2,603K at the stated precision, with inputs, sources and formula shown; reporting -2,603K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A002"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V34",
+   "text": "Operating-line EBITDA, FY2023 = 4,326K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A003"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V15",
+   "text": "Amortization of purchased intangibles included in pro forma combined cost of revenues = 376K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A004"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V38",
+   "text": "Salesforce proceeds from employee stock plans, nine months ended October 31, 2020 = 1,105K at the stated precision, with inputs, sources and formula shown; reporting 840K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A005"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V45",
+   "text": "The memo's closing block includes the line: \"Criterion 2: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A006"
+  },
+  {
+   "source": "dc_NVDA_DD_investment_committee__COMBINED_df3bc572",
+   "id": "V28",
+   "text": "The memo's closing block includes the line: \"Terminal tie-out: PASS / TIE-OUT FAILED\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A007"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V33",
+   "text": "Figures reported in a percentage to one decimal place: Year-over-year revenue growth rate, FY2025 versus FY2024, GAAP operating margin, FY2023, GAAP operating margin, FY2024, Recurring operating margin expansion, FY2023 to FY2025 ....",
+   "label": "non_atomic",
+   "reasons": [
+    "list"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A008"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V20",
+   "text": "S&P 500 total return for the fiscal year ended November 30, 2020 = 18K at the stated precision, with inputs, sources and formula shown; reporting 77K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A009"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V3",
+   "text": "Q1 2019 year-over-year revenue growth = 402.7% at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A010"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V23",
+   "text": "The deliverable includes Committee memo (memo).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A011"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V3",
+   "text": "Aggregate adjustment to opening shareholders' equity recorded on adoption of the change in accounting principle = -239K at the stated precision, with inputs, sources and formula shown; reporting -229K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A012"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V41",
+   "text": "The deliverable includes Workbook tab — screening criteria and terminal tie-out (workbook_tab).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A013"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V9",
+   "text": "FY2026 net income in the controlling annual report = 7,457K at the stated precision, with inputs, sources and formula shown; reporting 6,197K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A014"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V52",
+   "text": "The deliverable includes Committee memo (memo).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A015"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V5",
+   "text": "Personnel expense caption delta for FY2023 between the two annual filings = 476K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A016"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V36",
+   "text": "Three-month movement in consolidated other assets, net, for the quarter ended June 30, 2019 = 648K at the stated precision, with inputs, sources and formula shown; reporting 3,372K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A017"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V55",
+   "text": "Figures reported in a percentage to one decimal place: Slack year-over-year revenue growth, nine months ended October 31, 2020 versus nine months ended October 31, 2019, percent, Slack share of combined nine-month revenue, percent, Salesforce subscription and support revenue as a percentage of total revenue, six months ended July 31, 2020, Salesforce share of combined nine-month revenue, percent ....",
+   "label": "non_atomic",
+   "reasons": [
+    "list"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A018"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V32",
+   "text": "The response ends with the required line: \"FINAL RECOMMENDATION: PROCEED / DECLINE\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A019"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V34",
+   "text": "The memo ends with exactly \"FINAL RECOMMENDATION: DECLINE\" and names the failing criterion/criteria (Criterion 2, Criterion 3) as binding. Any other, hedged, or additional per-section recommendation fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "final_binding"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A020"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V16",
+   "text": "Acquisition-attributable purchased-intangible amortization in pro forma combined cost of revenues = 145K at the stated precision, with inputs, sources and formula shown; reporting 147K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A021"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V34",
+   "text": "Criterion 1 (Target total revenue growth rate FY2017 to FY2018 with both years on the prior revenue-recognition at or above 20.0%) is tested on the response's own figure; golden value 12.1% -> FAIL; the line reads \"Criterion 1: FAIL\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A022"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V15",
+   "text": "GAAP operating income, FY2025 = 1,871K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A023"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V52",
+   "text": "The deliverable includes Committee memo (memo).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A024"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V10",
+   "text": "Fiscal 2025 net interest expense, stated as interest income less interest expense (negative where net expense) = -44K at the stated precision, with inputs, sources and formula shown; reporting 299K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A025"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V45",
+   "text": "The memo ends with exactly \"FINAL RECOMMENDATION: DECLINE\" with every criterion shown as PASS. Any other, hedged, or additional per-section recommendation fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "final_binding"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A026"
+  },
+  {
+   "source": "dc_DHX_COMBINED",
+   "id": "V55",
+   "text": "Table in exD contains these rows: ['2005 Acquisition (Dice Inc.)', 'efinancialgroup']; and these columns: ['Pre-Acquisition Deferred Revenue', 'Write-Down Amount', 'Post-Purchase Balance', 'FY2006 Revenue Impact'].",
+   "label": "non_atomic",
+   "reasons": [
+    "list"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A027"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V18",
+   "text": "Two-year cash-conversion ratio on the, defined as combined two-year net cash provided by operating activities divided by total consolidated assets at the latest balance-sheet date in the pack = 44.0% at the stated precision, with inputs, sources and formula shown; reporting 53.5% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A028"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V41",
+   "text": "Slack trailing-twelve-month revenue through October 31, 2020 = 834K at the stated precision, with inputs, sources and formula shown; reporting 652K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A029"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V2",
+   "text": "Total Slack insider-held shares subject to repurchase by the company (Class A + Class B carve-outs disclosed in footnote) = 1,241,122K at the stated precision, with inputs, sources and formula shown; reporting 2,482,244K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A030"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V11",
+   "text": "FY2026 stock-based compensation expense as carried in the operating cash flow non-cash adjustments = 3,509K at the stated precision, with inputs, sources and formula shown; reporting 3,631K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A031"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V20",
+   "text": "Presentation gap between the company-reported 2025 gross bookings growth rate and the proxy-statement presentation of the same KPI = 40.0% at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A032"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V14",
+   "text": "Slack total operating expenses, percentage year-over-year change FY2017 to FY2018 = 41.9% at the stated precision, with inputs, sources and formula shown; reporting 29.6% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A033"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V21",
+   "text": "Number of Liberty Expedia Holdings common-share-count disclosures in the supplied pack a measurement date on or after January 1, 2019 = 0K at the stated precision, with inputs, sources and formula shown; reporting 1K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A034"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V24",
+   "text": "Total revenues, FY2023 = 21,593K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A035"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V46",
+   "text": "Combined two-year net cash provided by operating activities on = 12,878K at the stated precision, with inputs, sources and formula shown; reporting 15,667K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A036"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V16",
+   "text": "Two-fiscal-year change in EBITDA margin, FY2023 to FY2025 = 729K at the stated precision, with inputs, sources and formula shown; reporting 1,048K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A037"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V18",
+   "text": "FY2014 to FY2018 absolute consolidated revenue increase = 5,460K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A038"
+  },
+  {
+   "source": "dc_DHX_COMBINED",
+   "id": "V79",
+   "text": "Table in exC contains these rows: ['YTD 2007 EBITDA (from most recent 10-Q)', 'FY2006 Full-Year Reported EBITDA (Successor)', 'Less: Prior-Year YTD EBITDA (10-Q comparative)', 'Residual Prior-Year Quarter(s) EBITDA', 'LTM EBITDA', 'Total LT Debt incl. current portion (face value)', 'Net Leverage (Debt ÷ LTM EBITDA)']; and these columns: ['Amount ($M)', 'Source Filing & Line'].",
+   "label": "non_atomic",
+   "reasons": [
+    "list"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A039"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V50",
+   "text": "The terminal tie-out shows every place each multiply-used figure is used, with identical values, including: Total revenues, FY2023; Total revenues, FY2024; Sum of FY2025 printed revenue components; Total revenues, FY2025; Revenue less total cruise and tour operating expenses, FY2023; Recurring EBITDA, FY2025; Current portion of long-term debt at fiscal 2025 year-end, selected from the balances presented at multiple dates and in multiple filings; Recurring EBITDA, FY2024 (operating-line EBITDA plus the FY2024 gains/losses on ship sales and impairments charge, as FY2025); Exhibit E Route A; Charge-adjusted fiscal-2025 EBITDA; Gains/losses on ship sales and impairments, FY2025. Golden: \"Terminal tie-out: PASS\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A040"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V54",
+   "text": "The deliverable includes Workbook tab — screening criteria and terminal tie-out (workbook_tab).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A041"
+  },
+  {
+   "source": "dc_DHX_COMBINED",
+   "id": "V54",
+   "text": "Table in exA contains these rows: ['Pro Forma Revenue', '(−) Pro Forma Total Operating Expenses', 'Pro Forma Operating Income', '(+) Pro Forma Depreciation & Amortization', 'Pro Forma EBITDA', '(+) Deferred Revenue Purchase-Accounting Add-Back', 'Adjusted EBITDA']; and these columns: ['Amount ($ thousands)', 'Source / Basis'].",
+   "label": "non_atomic",
+   "reasons": [
+    "list"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A042"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V48",
+   "text": "Criterion 5 (FY2025 EBITDA margin on the operating-income-plus-D&A at or above 27.0%) is tested on the response's own figure; golden value 27.3% -> PASS; the line reads \"Criterion 5: PASS\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A043"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V21",
+   "text": "Level 1 share of total recurring fair-value assets at 12/31/2025, numerator and denominator paired within the FY2025 10-K hierarchy table = 59.3% at the stated precision, with inputs, sources and formula shown; reporting 46.8% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A044"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V64",
+   "text": "The memo's closing block includes the line: \"Terminal tie-out: PASS / TIE-OUT FAILED\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A045"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V7",
+   "text": "Per-share merger consideration for each share of Liberty Expedia Holdings common stock under the merger agreement as amended = 0K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A046"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V32",
+   "text": "Criterion 3 (Net reduction in Salesforce total remaining minimum operating lease payments over the nine months ended October 31, 2020 at or above 4,195K) is tested on the response's own figure; golden value 712.00x -> FAIL; the line reads \"Criterion 3: FAIL\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A047"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V20",
+   "text": "Criterion 3 (M&A cash intensity: cumulative FY2024–FY2026 cash deployed on business combinations net of cash acquired as a percentage of cumulative FY2024–FY2026 net cash provided by operating activities at or below 35.0%) is tested on the response's own figure; golden value 31.5% -> PASS; the line reads \"Criterion 3: PASS\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A048"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V48",
+   "text": "The deliverable includes Workbook tab — screening criteria and terminal tie-out (workbook_tab).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A049"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V7",
+   "text": "Slack gross margin, nine months ended October 31, 2020 = 86.7% at the stated precision, with inputs, sources and formula shown; reporting 84.6% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A050"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V12",
+   "text": "Fiscal 2025 year-end current portion of long-term debt as a percentage of fiscal 2025 recurring EBITDA = 35.3% at the stated precision, with inputs, sources and formula shown; reporting 35.8% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A051"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V46",
+   "text": "Criterion 3 (Coverage ratio at or above 2.80x) is tested on the response's own figure; golden value 2.59x -> FAIL; the line reads \"Criterion 3: FAIL\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A052"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V37",
+   "text": "The terminal tie-out shows every place each multiply-used figure is used, with identical values, including: Amortization of purchased intangibles included in pro forma combined cost of revenues; Acquisition-attributable purchased-intangible amortization in pro forma combined cost of revenues; Target total revenues, fiscal year ended December 31, 2018; Target total revenues, fiscal year ended December 31, 2018; Combined fair value at January 31, 2019 of acquirer corporate notes and obligations plus mortgage-backed obligations; Target total revenues, fiscal year ended December 31, 2017, as then reported under the prior revenue-recognition standard. Golden: \"Terminal tie-out: PASS\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A053"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V20",
+   "text": "Acquirer fair value of corporate notes and obligations at January 31, 2019, per the audited annual financial statements = 1,217K at the stated precision, with inputs, sources and formula shown; reporting 1,019K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A054"
+  },
+  {
+   "source": "dc_NVDA_DD_investment_committee__COMBINED_df3bc572",
+   "id": "V25",
+   "text": "Figures reported in USD thousands as whole numbers with separators (e.g. $12,345K): Net income, FY2025, as filed in the FY2026 annual report comparative column, Net cash provided by operating activities, FY2026, as filed, Magnitude of the inter-category reclassification of the three months ended April 26, 2026 comparative between the two 10-Q presentations.",
+   "label": "non_atomic",
+   "reasons": [
+    "list"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A055"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V8",
+   "text": "FY2025 net income growth rate over FY2024 = 49.8% at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A056"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V4",
+   "text": "Operating margin, FY2025, percent = 16.8% at the stated precision, with inputs, sources and formula shown; reporting 42.0% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A057"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V22",
+   "text": "The memo ends with exactly \"FINAL RECOMMENDATION: DECLINE\" and names the failing criterion/criteria (Criterion 1) as binding. Any other, hedged, or additional per-section recommendation fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "final_binding"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A058"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V3",
+   "text": "Slack gross margin percent, nine months ended October 31, 2020 = 86.7% at the stated precision, with inputs, sources and formula shown; reporting 84.6% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A059"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V27",
+   "text": "Criterion 1 (Year-over-year revenue growth rate, FY2025 versus FY2024 at or below 2.0%) is tested on the response's own figure; golden value 7.6% -> FAIL; the line reads \"Criterion 1: FAIL\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A060"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V47",
+   "text": "The memo's closing block includes the line: \"Terminal tie-out: PASS / TIE-OUT FAILED\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A061"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V42",
+   "text": "Aggregate outstanding stated principal of note tranches maturing on or before December 31, 2027, -tranche rows of the December 31, 2025 debt table = 2,055K at the stated precision, with inputs, sources and formula shown; reporting 2,839K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A062"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V65",
+   "text": "The response ends with the required line: \"FINAL RECOMMENDATION: PROCEED / DECLINE\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A063"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V10",
+   "text": "Coverage of principal maturing on or before December 31, 2027 by cash and cash equivalents at June 30, 2026 = 5.9x at the stated precision, with inputs, sources and formula shown; reporting 4.2x fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A064"
+  },
+  {
+   "source": "dc_DHX_COMBINED",
+   "id": "V27",
+   "text": "Table in exB contains these rows: ['2005 Acquisition', 'efinancialgroup Acquisition']; and these columns: ['Pre-Purchase Deferred Revenue', 'Post-Purchase Deferred Revenue', 'Write-Down Amount', 'FY2006 Revenue Impact', 'Notes'].",
+   "label": "non_atomic",
+   "reasons": [
+    "list"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A065"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V29",
+   "text": "Slack total operating expenses, fiscal year ended January 31, 2017 = 238K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A066"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V28",
+   "text": "The terminal tie-out shows every place each multiply-used figure is used, with identical values, including: Total revenue, FY2025, in the FY2025 Form 10-K income statement; Total revenue, FY2024, in the FY2025 Form 10-K comparative column; Allowance for doubtful accounts at December 31, 2025, per the FY2025 balance-sheet receivables parenthetical; Allowance for doubtful accounts at December 31, 2024, per the balance-sheet receivables parenthetical; Exhibit E test. Golden: \"Terminal tie-out: PASS\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A067"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V47",
+   "text": "Criterion 1 (FY2018 operating margin at or above 6.0%) is tested on the response's own figure; golden value 6.4% -> PASS; the line reads \"Criterion 1: PASS\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A068"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V50",
+   "text": "Criterion 4 (FY2014–FY2018 revenue CAGR over four compounding years at or above 15.0%) is tested on the response's own figure; golden value 18.1% -> PASS; the line reads \"Criterion 4: PASS\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A069"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V43",
+   "text": "USD principal of the €750 million November 2026 tranche implied by the December 31, 2025 EUR/USD rate = 880K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A070"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V48",
+   "text": "Criterion 1 (Slack year-over-year revenue growth, nine months ended October 31, 2020 versus nine months ended October 31, 2019, percent at or above 40.0%) is tested on the response's own figure; golden value 45.4% -> PASS; the line reads \"Criterion 1: PASS\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A071"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V58",
+   "text": "The memo's closing block includes the line: \"Criterion 1: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A072"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V29",
+   "text": "The memo's closing block includes the line: \"Criterion 2: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A073"
+  },
+  {
+   "source": "dc_NVDA_DD_investment_committee__COMBINED_df3bc572",
+   "id": "V18",
+   "text": "Criterion 2 (Year-over-year change in the cash tax burden, FY2026 versus FY2025 at or below 18.0%) is tested on the response's own figure; golden value -384.6% -> PASS; the line reads \"Criterion 2: PASS\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A074"
+  },
+  {
+   "source": "dc_DHX_COMBINED",
+   "id": "V115",
+   "text": "Table in exA contains these rows: ['Pro Forma Revenue', 'Less: Cost of Revenues', 'Less: Product Development', 'Less: Sales & Marketing', 'Less: General & Administrative', 'Less: Other Operating Charges', 'Total Operating Expenses', 'Pro Forma Operating Income', 'Add: Depreciation & Amortization', 'Pro Forma EBITDA']; and these columns: ['Amount ($K)', 'Source Reference'].",
+   "label": "non_atomic",
+   "reasons": [
+    "list"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A075"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V48",
+   "text": "The response ends with the required line: \"FINAL RECOMMENDATION: PROCEED / DECLINE\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A076"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V15",
+   "text": "FY2025 EBITDA margin on the operating-income-plus-D&A = 27.3% at the stated precision, with inputs, sources and formula shown; reporting 16.8% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A077"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V19",
+   "text": "Criterion 2 (FY2026 operating cash flow to net income conversion multiple (FY2026 OCF / FY2026 net income) at or above 1.8%) is tested on the response's own figure; golden value 2.0% -> PASS; the line reads \"Criterion 2: PASS\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A078"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V22",
+   "text": "Year-over-year change in the ship sales and asset impairments charge, FY2024 to FY2025 ($M, positive-charge) = 71K at the stated precision, with inputs, sources and formula shown; reporting -71K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A079"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V58",
+   "text": "The memo's closing block includes the line: \"Criterion 1: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A080"
+  },
+  {
+   "source": "dc_NVDA_DD_investment_committee__COMBINED_df3bc572",
+   "id": "V19",
+   "text": "The terminal tie-out shows every place each multiply-used figure is used, with identical values, including: Revenue of the largest disclosed direct-customer category, three months ended April 26, 2026; (hyperscale + AI clouds / industrial & enterprise), three months ended April 26, 2026. Golden: \"Terminal tie-out: PASS\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A081"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V31",
+   "text": "Net income attributable to Expedia Group, Inc., FY2018 = 406K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A082"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V30",
+   "text": "Criterion 1 (Slack gross margin percent, nine months ended October 31, 2020 at or above 85.0%) is tested on the response's own figure; golden value 86.7% -> PASS; the line reads \"Criterion 1: PASS\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A083"
+  },
+  {
+   "source": "dc_NVDA_DD_investment_committee__COMBINED_df3bc572",
+   "id": "V4",
+   "text": "Year-over-year change in the cash tax burden, FY2026 versus FY2025 = -384.6% at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A084"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V4",
+   "text": "Absolute excess of the FY2018 diluted share base over the reported basic share base = 3,247K at the stated precision, with inputs, sources and formula shown; reporting 0K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A085"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V28",
+   "text": "Net cash provided by operating activities, FY2023 = 6,464K at the stated precision, with inputs, sources and formula shown; reporting 7,344K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A086"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V21",
+   "text": "FY2025 OIBDA margin on total revenues = 27.3% at the stated precision, with inputs, sources and formula shown; reporting 16.8% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A087"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V45",
+   "text": "Salesforce.com consolidated trailing-twelve-month revenue through October 31, 2020 = 16,469K at the stated precision, with inputs, sources and formula shown; reporting 13,282K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A088"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V39",
+   "text": "Personnel expenses, FY2023 = 3,294K at the stated precision, with inputs, sources and formula shown; reporting 2,818K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A089"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V56",
+   "text": "Figures reported in a percentage to one decimal place: FY2014–FY2018 revenue CAGR over four compounding years, Q1 2019 year-over-year revenue growth, FY2017 to FY2018 consolidated operating income growth, FY2018 operating margin ....",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A090"
+  },
+  {
+   "source": "dc_DHX_COMBINED",
+   "id": "V68",
+   "text": "Condition A: PASS. Condition B: FAIL. Condition C: FAIL. At least one condition fails → Conclusion must be 'Hold'. Any output of 'Recommend Increase' is incorrect.  (depends on: V9, V10, V11)",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A091"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V25",
+   "text": "Euro-denominated share of the note stack at December 31, 2025: combined USD stated principal of the €750M and €1,000M tranches as a percentage of aggregate stated principal outstanding = 30K at the stated precision, with inputs, sources and formula shown; reporting 17K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A092"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V36",
+   "text": "Net debt at November 30, 2024 (total debt less cash and cash equivalents) = 26,264K at the stated precision, with inputs, sources and formula shown; reporting 27,474K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A093"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V53",
+   "text": "The deliverable includes Workbook tab — established figures (workbook_tab).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A094"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V23",
+   "text": "Increase in pro forma combined cost-of-revenues purchased-intangible amortisation from the useful-life restatement = 36K at the stated precision, with inputs, sources and formula shown; reporting 94K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A095"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V53",
+   "text": "The deliverable includes Workbook tab — established figures (workbook_tab).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A096"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V28",
+   "text": "The memo's closing block includes the line: \"Criterion 1: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A097"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V20",
+   "text": "Sequential percentage increase in consolidated other assets, net, from March 31, 2019 to June 30, 2019 = 23.8% at the stated precision, with inputs, sources and formula shown; reporting 19.2% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A098"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V12",
+   "text": "Customer deposits as a proportion of total current liabilities at November 30, 2024 = 51.8% at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A099"
+  },
+  {
+   "source": "dc_DHX_COMBINED",
+   "id": "V13",
+   "text": "The pro forma FY2006 operating income figure in the concluding section CAGR calculation must exactly match the figure derived in Exhibit A. The FY08E operating income and debt ratio in the concluding section must exactly match Exhibit C values. Any discrepancy between exhibits and the conclusion is a failure.  (depends on: V3, V8, V10, V11, V12)",
+   "label": "non_atomic",
+   "reasons": [
+    "multiple_values"
+   ],
+   "labeled_by": "manual",
+   "case": "A100"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V55",
+   "text": "Figures reported in a percentage to one decimal place: Fiscal-2025 fuel expense as a percentage of fiscal-2025 total revenues, Total revenue growth rate, FY2024 to FY2025, percent, Operating margin, FY2023, percent, Operating margin, FY2024, percent ....",
+   "label": "non_atomic",
+   "reasons": [
+    "list"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A101"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V37",
+   "text": "Total consolidated assets at June 30, 2026 = 29,264K at the stated precision, with inputs, sources and formula shown; reporting 15,096K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A102"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V4",
+   "text": "FY2023 personnel expense caption delta between the FY2025 10-K comparative column and the FY2024 10-K as-originally-reported caption = 476K at the stated precision, with inputs, sources and formula shown; reporting 0K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A103"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V53",
+   "text": "The deliverable includes Committee memo (memo).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A104"
+  },
+  {
+   "source": "dc_NVDA_DD_investment_committee__COMBINED_df3bc572",
+   "id": "V29",
+   "text": "The response ends with the required line: \"FINAL RECOMMENDATION: PROCEED / DECLINE\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A105"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V38",
+   "text": "Figures reported in a percentage to one decimal place: Slack year-over-year total revenue growth percent, nine months ended October 31, 2020 versus nine months ended October 31, 2019, Implied Salesforce year-over-year total revenue growth rate, three months ended October 31, 2020, Slack loss from operations as a percentage of revenue, fiscal year ended January 31, 2020, Slack operating margin percent, nine months ended October 31, 2020 ....",
+   "label": "non_atomic",
+   "reasons": [
+    "list"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A106"
+  },
+  {
+   "source": "dc_DHX_COMBINED",
+   "id": "V146",
+   "text": "CapEx from S-1 investing activities = 2,694 ($K, positive per SEC convention). Confirm the analyst model's negative-sign version was NOT used. The governing rule 'Where a figure appears in both an analyst model and an SEC filing, the SEC filing's presentation, sign convention, and unit basis govern' applies.",
+   "label": "non_atomic",
+   "reasons": [
+    "trap"
+   ],
+   "labeled_by": "manual",
+   "case": "A107"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V56",
+   "text": "Figures reported in USD thousands as whole numbers with separators (e.g. $12,345K): Slack trailing-twelve-month cost of revenue through October 31, 2020, Slack trailing-twelve-month revenue as a percentage of combined trailing-twelve-month revenue, Slack gross-margin improvement, nine months ended October 31, 2020 vs nine months ended October 31, 2019, Slack operating loss, three months ended January 31, 2020 ....",
+   "label": "non_atomic",
+   "reasons": [
+    "list"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A108"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V29",
+   "text": "Slack cost of revenue, fiscal year ended January 31, 2020 = 97K at the stated precision, with inputs, sources and formula shown; reporting 87K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A109"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V21",
+   "text": "Operating-leverage spread = 10.6% at the stated precision, with inputs, sources and formula shown; reporting 122.2% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A110"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V36",
+   "text": "Criterion 3 (Amortization intensity ratio at or below 11.5%) is tested on the response's own figure; golden value 11.0% -> PASS; the line reads \"Criterion 3: PASS\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A111"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V41",
+   "text": "Charge-adjusted fiscal-2025 EBITDA = 6,754K at the stated precision, with inputs, sources and formula shown; reporting 6,864K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A112"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V54",
+   "text": "The deliverable includes Workbook tab — screening criteria and terminal tie-out (workbook_tab).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A113"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V36",
+   "text": "The deliverable includes Workbook tab — established figures (workbook_tab).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A114"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V30",
+   "text": "The deliverable includes Committee memo (memo).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A115"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V42",
+   "text": "Figures reported in a percentage to one decimal place: Target total revenue growth rate FY2017 to FY2018 with both years on the prior revenue-recognition, Increase expressed as a percentage of the pro forma combined cost-of-revenues purchased-intangible amortisation, Non- mixed- FY2017→FY2018 total revenue growth, Combined corporate notes and obligations plus mortgage-backed obligations as a percentage of the acquirer's total marketable securities at January 31, 2019 ....",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A116"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V31",
+   "text": "Slack cost of revenue, three months ended January 31, 2020, as fiscal-year-2020 cost of revenue less nine-month cost of revenue = 24K at the stated precision, with inputs, sources and formula shown; reporting 11K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A117"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V52",
+   "text": "The response ends with the required line: \"FINAL RECOMMENDATION: PROCEED / DECLINE\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A118"
+  },
+  {
+   "source": "dc_DHX_COMBINED",
+   "id": "V78",
+   "text": "Table in exA contains these rows: ['Pro Forma Revenue', 'Cost of Revenues', 'Product Development', 'Sales & Marketing', 'General & Administrative', 'Depreciation & Amortization', 'Other Operating Expenses', 'Total Operating Expenses', 'Pro Forma Operating Income', 'Add-back: D&A', 'Pro Forma EBITDA']; and these columns: ['FY2006 ($M)', 'Source Reference'].",
+   "label": "non_atomic",
+   "reasons": [
+    "list"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A119"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V57",
+   "text": "Figures reported in USD thousands as whole numbers with separators (e.g. $12,345K): Quantified comparability-distorting item behind the multi-year revenue / operating-income series: acquisition accounting adjustments and impairments impacting 2017 Expedia segment results, FY2018 revenue per diluted share, FY2014 to FY2018 absolute consolidated revenue increase, Change in Expedia Group consolidated operating income, FY2017 to FY2018 ....",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A120"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V35",
+   "text": "The deliverable includes Committee memo (memo).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A121"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V52",
+   "text": "The deliverable includes Committee memo (memo).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A122"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V2",
+   "text": "Year-over-year growth rate in the allowance for doubtful accounts, fiscal 2025 year-end versus fiscal 2024 year-end = 34.5% at the stated precision, with inputs, sources and formula shown; reporting 19.0% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A123"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V30",
+   "text": "Target net loss, fiscal year ended December 31, 2018 = -277,238K at the stated precision, with inputs, sources and formula shown; reporting -77,042K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A124"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V33",
+   "text": "Cash and cash equivalents per the consolidated balance sheet at November 30, 2025 = 1,928K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A125"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V51",
+   "text": "The memo ends with exactly \"FINAL RECOMMENDATION: PROCEED\" with every criterion shown as PASS. Any other, hedged, or additional per-section recommendation fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "final_binding"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A126"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V17",
+   "text": "Slack gross margin, nine months ended October 31, 2019 = 83.8% at the stated precision, with inputs, sources and formula shown; reporting 86.7% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A127"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V18",
+   "text": "Criterion 1 (FY2025 year-over-year total revenue growth rate on at or above 9.0%) is tested on the response's own figure; golden value 8.7% -> FAIL; the line reads \"Criterion 1: FAIL\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A128"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V56",
+   "text": "Figures reported in a percentage to one decimal place: Net debt at June 30, 2026 as a percentage of total consolidated assets at the same date, Operating-leverage spread, Year-over-year growth in personnel expenses, FY2025 vs FY2024, Cash and cash equivalents at June 30, 2026 as a share of total consolidated assets at June 30, 2026 ....",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A129"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V34",
+   "text": "Implied EUR/USD translation rate at December 31, 2025 from the 1.8% €1,000 million Senior Notes due March 2027 = 117.4% at the stated precision, with inputs, sources and formula shown; reporting 103.5% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A130"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V36",
+   "text": "The memo's closing block includes the line: \"Terminal tie-out: PASS / TIE-OUT FAILED\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A131"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V37",
+   "text": "Expedia Group basic weighted average shares outstanding, FY2018 = 149,961K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A132"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V6",
+   "text": "Three-year cumulative net cash provided by operating activities, FY2023 + FY2024 + FY2025, all on the most-recently-filed Form 10-K comparative = 20,087K at the stated precision, with inputs, sources and formula shown; reporting 22,876K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A133"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V25",
+   "text": "FY2024 asset--value impairment add-back, derived as recurring operating income less reported GAAP operating income = 147K at the stated precision, with inputs, sources and formula shown; reporting 0K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A134"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V17",
+   "text": "Acquisition-attributable pro forma cost-of-revenues purchased-intangible amortization from the 5-year pro forma developed-technology life onto the acquirer's historical 4-year developed-technology life = 181K at the stated precision, with inputs, sources and formula shown; reporting 145K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A135"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V54",
+   "text": "The deliverable includes Workbook tab — screening criteria and terminal tie-out (workbook_tab).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A136"
+  },
+  {
+   "source": "dc_DHX_COMBINED",
+   "id": "V150",
+   "text": "Recompute CAGR: (181.692 / 101.674)^(1/3) − 1 ≈ 0.2135 (21.35%). Verify the result exceeds the 20% hurdle (condition (a) of the initiation mandate is SATISFIED). The ratio 181.692/101.674 ≈ 1.78701; its cube root ≈ 1.21351.  (depends on: C89, C90, C91)",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A137"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V47",
+   "text": "Criterion 1 (Two-year cash-conversion ratio on the, defined as combined two-year net cash provided by operating activities divided by total consolidated assets at the latest balance-sheet date in the pack at or above 45.0%) is tested on the response's own figure; golden value 44.0% -> FAIL; the line reads \"Criterion 1: FAIL\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A138"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V15",
+   "text": "Cumulative FY2024–FY2026 cash deployed on business combinations, net of cash acquired = 12,084K at the stated precision, with inputs, sources and formula shown; reporting 9,268K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A139"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V34",
+   "text": "Figures reported in USD thousands as whole numbers with separators (e.g. $12,345K): Fiscal 2025 net interest expense, stated as interest income less interest expense (negative where net expense), Three-year aggregate normalisation adjustment, FY2023 + FY2024 + FY2025, Change in the allowance for doubtful accounts, December 31, 2024 to December 31, 2025, Contracted operating lease payments due in calendar 2028 and calendar 2029.",
+   "label": "non_atomic",
+   "reasons": [
+    "list"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A140"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V38",
+   "text": "The memo ends with exactly \"FINAL RECOMMENDATION: DECLINE\" and names the failing criterion/criteria (Criterion 1) as binding. Any other, hedged, or additional per-section recommendation fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "final_binding"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A141"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V12",
+   "text": "Slack loss from operations as a percentage of revenue, fiscal year ended January 31, 2020 = -93.3% at the stated precision, with inputs, sources and formula shown; reporting -110.3% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A142"
+  },
+  {
+   "source": "dc_NVDA_DD_investment_committee__COMBINED_df3bc572",
+   "id": "V27",
+   "text": "The memo's closing block includes the line: \"Criterion 2: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A143"
+  },
+  {
+   "source": "dc_NVDA_DD_investment_committee__COMBINED_df3bc572",
+   "id": "V22",
+   "text": "The deliverable includes Workbook tab — established figures (workbook_tab).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A144"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V43",
+   "text": "Figures reported in USD thousands as whole numbers with separators (e.g. $12,345K): Effect of adopting the new revenue standard on the target's fiscal 2018 total revenues, Favourable effect of adopting the new revenue standard on target FY2018 net loss, Target operating income for the fiscal year in which it reported positive operating income, Magnitude of the projection-model version conflict ....",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A145"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V61",
+   "text": "The memo's closing block includes the line: \"Terminal tie-out: PASS / TIE-OUT FAILED\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A146"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V40",
+   "text": "The memo's closing block includes the line: \"Criterion 1: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A147"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V25",
+   "text": "EXHIBIT E COMPOSITE VARIANCE MAGNITUDE = 0K at the stated precision, with inputs, sources and formula shown; reporting 0K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A148"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V31",
+   "text": "The deliverable includes Workbook tab — established figures (workbook_tab).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A149"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V24",
+   "text": "Projected depreciation and amortisation, fiscal year 2033E = 179K at the stated precision, with inputs, sources and formula shown; reporting 142K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A150"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V29",
+   "text": "The memo ends with exactly \"FINAL RECOMMENDATION: DECLINE\" and names the failing criterion/criteria (Criterion 1) as binding. Any other, hedged, or additional per-section recommendation fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "final_binding"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A151"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V61",
+   "text": "The response ends with the required line: \"FINAL RECOMMENDATION: PROCEED / DECLINE\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A152"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V57",
+   "text": "Figures reported in a multiple to one decimal place (e.g. 12.0x): Coverage ratio, Maturity-wall coverage, defined as FY2025 adjusted operating EBITDA divided by current portion of long-term debt at November 30, 2025 times.",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A153"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V38",
+   "text": "Cash and cash equivalents at June 30, 2026 = 12,045K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A154"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V21",
+   "text": "The terminal tie-out shows every place each multiply-used figure is used, with identical values, including: FY2026 net income in the controlling annual report; FY2026 net cash provided by operating activities in the annual report; Cumulative FY2024–FY2026 cash deployed on business combinations, net of cash acquired. Golden: UNRESOLVED — the answer key holds conflicting goldens; SME must resolve.",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A155"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V17",
+   "text": "Customer deposits as a percentage of total current liabilities, November 30, 2024 = 55.3% at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A156"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V44",
+   "text": "Guarantor-subsidiaries share of combined guarantor plus non-guarantor selling and marketing expense, three months ended MARCH 31, 2019 = 64.1% at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A157"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V17",
+   "text": "Cumulative FY2024–FY2026 net cash provided by operating activities = 38,322K at the stated precision, with inputs, sources and formula shown; reporting 14,996K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A158"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V52",
+   "text": "The memo ends with exactly \"FINAL RECOMMENDATION: DECLINE\" and names the failing criterion/criteria (Criterion 2) as binding. Any other, hedged, or additional per-section recommendation fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "final_binding"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A159"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V63",
+   "text": "The response ends with the required line: \"FINAL RECOMMENDATION: PROCEED / DECLINE\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A160"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V19",
+   "text": "Allowance for doubtful accounts at December 31, 2024, per the balance-sheet receivables parenthetical = 55K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A161"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V21",
+   "text": "Slack gross profit, nine months ended October 31, 2020 = 565K at the stated precision, with inputs, sources and formula shown; reporting 5,853K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A162"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V54",
+   "text": "The deliverable includes Workbook tab — established figures (workbook_tab).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A163"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V26",
+   "text": "Ratio of the principal-over- on the single retired 0.75% convertible tranche at December 31, 2024 to the aggregate principal-over- on the entire surviving note stack at December 31, 2025 = 12.8% at the stated precision, with inputs, sources and formula shown; reporting 6.4% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A164"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V1",
+   "text": "FY2018 operating margin = 6.4% at the stated precision, with inputs, sources and formula shown; reporting 361.8% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A165"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V11",
+   "text": "Contracted operating lease payments due in calendar 2028 and calendar 2029 = 122K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A166"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V29",
+   "text": "Customer deposits per the consolidated balance sheet at November 30, 2025 = 6,831K at the stated precision, with inputs, sources and formula shown; reporting 7K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A167"
+  },
+  {
+   "source": "dc_DHX_COMBINED",
+   "id": "V129",
+   "text": "Leverage of 5.18x ≤ 6.00x → Conclusion must be 'WITHIN MANDATE at 5.18x trailing Pro Forma EBITDA'. Any conditional, hedged, or range-based conclusion is non-compliant. The exact phrasing must include 'WITHIN MANDATE' and the ratio to two decimal places.  (depends on: V12)",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A168"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V1",
+   "text": "Fiscal-2025 fuel expense as a percentage of fiscal-2025 total revenues = 6.8% at the stated precision, with inputs, sources and formula shown; reporting 11.3% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A169"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V60",
+   "text": "The memo's closing block includes the line: \"Terminal tie-out: PASS / TIE-OUT FAILED\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A170"
+  },
+  {
+   "source": "dc_DHX_COMBINED",
+   "id": "V89",
+   "text": "Pro Forma Operating Income = $101,674K − $93,412K = $8,262K. EBITDA = $8,262K + $21,706K = $29,968K. Cross-check: $101,674K − $71,706K = $29,968K. Both paths must agree. Result must be within ±$500K of $29,968K anchor.  (depends on: V1, V3, V4)",
+   "label": "non_atomic",
+   "reasons": [
+    "multiple_values"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A171"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V60",
+   "text": "The memo's closing block includes the line: \"Criterion 3: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A172"
+  },
+  {
+   "source": "dc_DHX_COMBINED",
+   "id": "V26",
+   "text": "Table in exA contains these rows: ['Pro Forma Revenues', 'Cost of Revenues', 'Product Development', 'Sales & Marketing', 'General & Administrative', 'Depreciation', 'Amortization', 'Other Operating Items (if any)', 'Total Operating Expenses', 'Pro Forma Operating Income']; and these columns: ['Pro Forma FY2006 ($K)', 'Source Reference'].",
+   "label": "non_atomic",
+   "reasons": [
+    "list"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A173"
+  },
+  {
+   "source": "dc_NVDA_DD_investment_committee__COMBINED_df3bc572",
+   "id": "V24",
+   "text": "Figures reported in a percentage to one decimal place: Largest disclosed direct-customer category as a share of the combined revenue of the two largest disclosed direct-customer categories, three months ended April 26, 2026, Second disclosed customer category as a percentage of the combined two-category revenue, three months ended April 26, 2026, Net income CAGR, fiscal 2024 to fiscal 2026, Year-over-year change in the cash tax burden, FY2026 versus FY2025 ....",
+   "label": "non_atomic",
+   "reasons": [
+    "list"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A174"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V31",
+   "text": "The memo's closing block includes the line: \"Terminal tie-out: PASS / TIE-OUT FAILED\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A175"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V8",
+   "text": "Aggregate unamortized debt discount and debt issuance costs carried on total debt at November 30, 2025 (total face amount per the debt maturity schedule less total on the balance sheet) = 283K at the stated precision, with inputs, sources and formula shown; reporting 2,886K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A176"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V6",
+   "text": "Change in Level 1 share of recurring fair-value assets, 12/31/2025 to 6/30/2026, in percentage points = -24.1% at the stated precision, with inputs, sources and formula shown; reporting -220.8% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A177"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V11",
+   "text": "Variance at November 30, 2024 between implied total shareholders' equity and equity attributable to shareholders per the statement of shareholders' equity, as adjusted = 0K at the stated precision, with inputs, sources and formula shown; reporting -239K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A178"
+  },
+  {
+   "source": "dc_NVDA_DD_investment_committee__COMBINED_df3bc572",
+   "id": "V21",
+   "text": "The deliverable includes Committee memo (memo).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A179"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V32",
+   "text": "Slack gross profit, nine months ended October 31, 2019 = 376K at the stated precision, with inputs, sources and formula shown; reporting 5,853K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A180"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V29",
+   "text": "Target net loss, fiscal year ended December 31, 2018 = -77,042K at the stated precision, with inputs, sources and formula shown; reporting -277,238K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A181"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V46",
+   "text": "The deliverable includes Committee memo (memo).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A182"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V40",
+   "text": "Net loss attributable to non-controlling interests, three months ended March 31, 2019, as originally reported in the Q1 2019 10-Q = -12K at the stated precision, with inputs, sources and formula shown; reporting -10K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A183"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V44",
+   "text": "The memo's closing block includes the line: \"Criterion 1: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A184"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V14",
+   "text": "Stand-alone three-month Guarantor Subsidiaries selling and marketing expense, quarter ended June 30, 2019 = 1,070K at the stated precision, with inputs, sources and formula shown; reporting 2,118K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A185"
+  },
+  {
+   "source": "dc_NVDA_DD_investment_committee__COMBINED_df3bc572",
+   "id": "V12",
+   "text": "Revenue of the second disclosed direct-customer category (AI clouds / industrial & enterprise), three months ended April 26, 2026 = 32,196K at the stated precision, with inputs, sources and formula shown; reporting 37,377K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A186"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V3",
+   "text": "Increase expressed as a percentage of the pro forma combined cost-of-revenues purchased-intangible amortisation = 9.6% at the stated precision, with inputs, sources and formula shown; reporting 25.0% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A187"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V13",
+   "text": "Salesforce share of combined nine-month revenue, percent = 95.9% at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A188"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V16",
+   "text": "Slack cost of revenue, nine months ended October 31, 2020 = 87K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A189"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V13",
+   "text": "Three-year aggregate net cash provided by operating activities, FY2023–FY2025 = 20,087K at the stated precision, with inputs, sources and formula shown; reporting 22,876K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A190"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V45",
+   "text": "Criterion 2 (Maturity-wall coverage, defined as FY2025 adjusted operating EBITDA divided by current portion of long-term debt at November 30, 2025 times at or above 2.80x) is tested on the response's own figure; golden value 2.84x -> PASS; the line reads \"Criterion 2: PASS\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A191"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V3",
+   "text": "Operating margin, FY2024, percent = 14.3% at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A192"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V37",
+   "text": "Increase in current portion of long-term debt, FY2024 year-end to FY2025 year-end = 1,065K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A193"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V27",
+   "text": "Total debt at November 30, 2024 (current portion of long-term debt plus long-term debt) = 27,474K at the stated precision, with inputs, sources and formula shown; reporting 25,936K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A194"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V26",
+   "text": "Onboard and other revenue, FY2025 = 9,202K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A195"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V41",
+   "text": "Investing cash flows other than capital expenditures, fiscal 2024 = 72K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A196"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V18",
+   "text": "Slack total operating expenses, nine months ended October 31, 2020 = 776K at the stated precision, with inputs, sources and formula shown; reporting 1,122K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A197"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V14",
+   "text": "Net change in total debt over fiscal 2025 = -834K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A198"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V49",
+   "text": "Figures reported in USD thousands as whole numbers with separators (e.g. $12,345K): Change in net debt over fiscal 2025, Aggregate unamortized debt discount and debt issuance costs carried on total debt at November 30, 2025 (total face amount per the debt maturity schedule less total on the balance sheet), Aggregate unamortized debt discount and debt issuance costs carried on total debt at August 31, 2026 (total face amount per the interim maturity schedule less total interim), Net change in total debt over fiscal 2025 ....",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A199"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V44",
+   "text": "The terminal tie-out shows every place each multiply-used figure is used, with identical values, including: Long-term debt excluding current portion in the fiscal 2025 10-K comparative column at November 30, 2024; Total debt at November 30, 2025 (current portion of long-term debt plus long-term debt); Total current liabilities per the consolidated balance sheet at November 30, 2025; Customer deposits per the consolidated balance sheet at November 30, 2025; Total current liabilities per the fiscal 2025 10-K comparative column at November 30, 2024; Equity attributable to shareholders at November 30, 2024 per the statement of shareholders' equity, after the change-in-accounting-principle adjustment disclosed in footnote; Investing cash flows other than capital expenditures, fiscal 2025 (net cash used in investing activities less purchases of property and equipment). Golden: UNRESOLVED — the answer key holds conflicting goldens; SME must resolve.",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A200"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V35",
+   "text": "Criterion 2 (Year-over-year widening of target operating loss, Q1 2019 vs Q1 2018 (prior-year operating loss less current-year operating loss (positive where wider loss)) at or above 25,000K) is tested on the response's own figure; golden value 42801.00x -> PASS; the line reads \"Criterion 2: PASS\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A201"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V7",
+   "text": "FY2026 net income growth rate over FY2025 = 20.3% at the stated precision, with inputs, sources and formula shown; reporting 80.3% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A202"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V25",
+   "text": "Projected depreciation and amortisation, fiscal year 2029E = 140K at the stated precision, with inputs, sources and formula shown; reporting 105K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A203"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V14",
+   "text": "FY2024 EBITDA margin on the operating-income-plus-D&A = 24.5% at the stated precision, with inputs, sources and formula shown; reporting 14.3% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A204"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V17",
+   "text": "Charge-adjusted fiscal-2025 EBITDA margin = 25.4% at the stated precision, with inputs, sources and formula shown; reporting 27.3% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A205"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V11",
+   "text": "Salesforce subscription and support revenue as a percentage of total revenue, six months ended July 31, 2020 = 94.0% at the stated precision, with inputs, sources and formula shown; reporting 93.5% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A206"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V22",
+   "text": "EXHIBIT E CHECK 1 VARIANCE = 0K at the stated precision, with inputs, sources and formula shown; reporting 0K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A207"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V27",
+   "text": "Expedia Group consolidated operating income, FY2018 = 714K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A208"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V62",
+   "text": "The memo's closing block includes the line: \"Criterion 5: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A209"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V19",
+   "text": "Implied total shareholders' equity, November 30, 2024 = 9,253K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A210"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V7",
+   "text": "Three-year aggregate normalisation adjustment, FY2023 + FY2024 + FY2025 = 573K at the stated precision, with inputs, sources and formula shown; reporting 426K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A211"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V50",
+   "text": "The terminal tie-out shows every place each multiply-used figure is used, with identical values, including: Slack revenue, nine months ended October 31, 2020; Slack gross profit, nine months ended October 31, 2020; Slack revenue, nine months ended October 31, 2019; Slack cost of revenue, nine months ended October 31, 2019; Slack total operating expenses, nine months ended October 31, 2019; Slack revenue, fiscal year ended January 31, 2020; Slack cost of revenue, fiscal year ended January 31, 2020; Slack total operating expenses, fiscal year ended January 31, 2020; Slack gross profit, nine months ended October 31, 2019; Slack gross profit, fiscal year ended January 31, 2020; Combined Salesforce-plus-Slack revenue, nine months ended October 31, 2020; Slack gross profit, fiscal year ended January 31, 2019 (. Golden: UNRESOLVED — the answer key holds conflicting goldens; SME must resolve.",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A212"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V51",
+   "text": "The terminal tie-out shows every place each multiply-used figure is used, with identical values, including: Expedia Group consolidated revenue, FY2018; Expedia Group consolidated operating income, FY2018; Implied FY2018 diluted weighted average shares (net income attributable to Expedia Group / reported diluted EPS, scaled from $ to o); Selling and marketing expense, Guarantor Subsidiaries column, three months ended March 31, 2019; Selling and marketing expense, Non-Guarantor Subsidiaries column, three months ended March 31, 2019; Combined guarantor plus non-guarantor selling and marketing before eliminations, three months ended March 31, 2019; Expedia Group basic weighted average shares outstanding, FY2018; Expedia Group consolidated operating income, FY2017. Golden: UNRESOLVED — the answer key holds conflicting goldens; SME must resolve.",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A213"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V14",
+   "text": "Gate A coverage ratio: FY2024 net cash provided by operating activities to aggregate 2025 retired note principal = 1.7x at the stated precision, with inputs, sources and formula shown; reporting 2.2x fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A214"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V22",
+   "text": "Aggregate stated principal of senior/convertible senior note tranches that ceased to be outstanding during 2025, expressed as a percentage of the aggregate stated principal still outstanding at December 31, 2025 = 55.3% at the stated precision, with inputs, sources and formula shown; reporting 55.6% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A215"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V6",
+   "text": "Slack year-over-year total revenue growth percent, nine months ended October 31, 2020 versus nine months ended October 31, 2019 = 45.4% at the stated precision, with inputs, sources and formula shown; reporting 57.4% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A216"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V26",
+   "text": "Target total revenues, fiscal year ended December 31, 2017, as then reported under the prior revenue-recognition standard = 877,059K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A217"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V42",
+   "text": "The memo's closing block includes the line: \"Criterion 3: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A218"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V30",
+   "text": "Aggregate outstanding stated principal of senior and convertible senior notes at December 31, 2025 = 6,817K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A219"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V21",
+   "text": "FTSE 100 total return for the fiscal year ended November 30, 2020 = -11K at the stated precision, with inputs, sources and formula shown; reporting 54K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A220"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V59",
+   "text": "The memo's closing block includes the line: \"Criterion 2: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A221"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V40",
+   "text": "The deliverable includes Workbook tab — established figures (workbook_tab).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A222"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V46",
+   "text": "Combined trailing-twelve-month revenue of Slack and salesforce.com through October 31, 2020 = 17,303K at the stated precision, with inputs, sources and formula shown; reporting 850,384K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A223"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V44",
+   "text": "The response ends with the required line: \"FINAL RECOMMENDATION: PROCEED / DECLINE\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A224"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V2",
+   "text": "FY2026 net change in operating assets and liabilities ((AR, capitalized contract costs, prepaid/other assets, AP & accrued liabilities, operating lease liab)) = -781K at the stated precision, with inputs, sources and formula shown; reporting 781K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A225"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V48",
+   "text": "Criterion 2 (Gross bookings growth delta at or below 6.0%) is tested on the response's own figure; golden value 40.0% -> FAIL; the line reads \"Criterion 2: FAIL\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A226"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V58",
+   "text": "The memo's closing block includes the line: \"Criterion 1: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A227"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V47",
+   "text": "Criterion 4 (Total revenue growth rate, FY2024 to FY2025, percent at or above 5.0%) is tested on the response's own figure; golden value 6.4% -> PASS; the line reads \"Criterion 4: PASS\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A228"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V36",
+   "text": "Slack total operating expenses, three months ended January 31, 2020 (stub quarter = 249K at the stated precision, with inputs, sources and formula shown; reporting 776K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A229"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V39",
+   "text": "Figures reported in USD thousands as whole numbers with separators (e.g. $12,345K): Salesforce year-over-year increase in subscription and support revenues, three months ended October 31, 2020, Total Slack insider-held shares subject to repurchase by the company (Class A + Class B carve-outs disclosed in footnote), Slack loss from operations, nine months ended October 31, 2020 (gross profit less total operating expenses, converted to), Net reduction in Salesforce total remaining minimum operating lease payments over the nine months ended October 31, 2020 ....",
+   "label": "non_atomic",
+   "reasons": [
+    "list"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A230"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V12",
+   "text": "FY2018 consolidated operating income per diluted share = 5K at the stated precision, with inputs, sources and formula shown; reporting 5K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A231"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V59",
+   "text": "The memo's closing block includes the line: \"Criterion 2: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A232"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V63",
+   "text": "The memo's closing block includes the line: \"Criterion 6: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A233"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V9",
+   "text": "Salesforce year-over-year increase in subscription and support revenues, three months ended October 31, 2020 = 873K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A234"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V14",
+   "text": "FY2026 cash paid for business combinations, net of cash acquired = 9,268K at the stated precision, with inputs, sources and formula shown; reporting -9,268K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A235"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V12",
+   "text": "FY2025 total revenue = 37,895K at the stated precision, with inputs, sources and formula shown; reporting 35,679K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A236"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V31",
+   "text": "Criterion 2 (Slack operating margin percent, nine months ended October 31, 2020 at or above -30.0%) is tested on the response's own figure; golden value -32.3% -> FAIL; the line reads \"Criterion 2: FAIL\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A237"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V59",
+   "text": "The memo's closing block includes the line: \"Criterion 2: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A238"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V37",
+   "text": "Total debt at the interim balance-sheet date, August 31, 2026 = 24,942K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A239"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V27",
+   "text": "Aggregate projected depreciation and amortisation, fiscal 2029E–2033E = 804K at the stated precision, with inputs, sources and formula shown; reporting 622K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A240"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V51",
+   "text": "The memo ends with exactly \"FINAL RECOMMENDATION: DECLINE\" and names the failing criterion/criteria (Criterion 1, Criterion 2) as binding. Any other, hedged, or additional per-section recommendation fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "final_binding"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A241"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V56",
+   "text": "Figures reported in USD thousands as whole numbers with separators (e.g. $12,345K): FY2025 revenue-component footing variance, Gate leg threshold: one-third of fiscal 2025 recurring EBITDA, Two-fiscal-year change in EBITDA margin, FY2023 to FY2025, Calendar year of the U.S. federal tax statute defined as the 'Code' in the organisational documents annexed to the proxy ....",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A242"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V48",
+   "text": "Criterion 2 (Q1 2019 year-over-year revenue growth at or above 5.0%) is tested on the response's own figure; golden value 4.0% -> FAIL; the line reads \"Criterion 2: FAIL\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A243"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V60",
+   "text": "The memo's closing block includes the line: \"Criterion 3: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A244"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V35",
+   "text": "The memo's closing block includes the line: \"Criterion 1: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A245"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V50",
+   "text": "Figures reported in a percentage to one decimal place: Customer deposits as a proportion of total current liabilities at November 30, 2025, Customer deposits as a proportion of total current liabilities at November 30, 2024, Customer deposits as a percentage of total current liabilities, November 30, 2024.",
+   "label": "non_atomic",
+   "reasons": [
+    "list"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A246"
+  },
+  {
+   "source": "dc_NVDA_DD_investment_committee__COMBINED_df3bc572",
+   "id": "V23",
+   "text": "The deliverable includes Workbook tab — screening criteria and terminal tie-out (workbook_tab).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A247"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V24",
+   "text": "The deliverable includes Workbook tab — established figures (workbook_tab).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A248"
+  },
+  {
+   "source": "dc_NVDA_DD_investment_committee__COMBINED_df3bc572",
+   "id": "V17",
+   "text": "Criterion 1 (Net cash provided by operating activities, FY2026, as filed at or above 1K) is tested on the response's own figure; golden value 102718.00x -> PASS; the line reads \"Criterion 1: PASS\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A249"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V49",
+   "text": "Criterion 6 (Operating margin, FY2025, percent at or above 15.0%) is tested on the response's own figure; golden value 16.8% -> PASS; the line reads \"Criterion 6: PASS\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A250"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V53",
+   "text": "The deliverable includes Workbook tab — established figures (workbook_tab).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A251"
+  },
+  {
+   "source": "dc_NVDA_DD_investment_committee__COMBINED_df3bc572",
+   "id": "V26",
+   "text": "The memo's closing block includes the line: \"Criterion 1: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A252"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V41",
+   "text": "The memo's closing block includes the line: \"Criterion 2: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A253"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V26",
+   "text": "Figures reported in a percentage to one decimal place: FY2025 year-over-year total revenue growth rate on, FY2026 operating cash flow to net income conversion multiple (FY2026 OCF / FY2026 net income), FY2026 net income growth rate over FY2025, FY2025 net income growth rate over FY2024 ....",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A254"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V57",
+   "text": "Figures reported in a multiple to one decimal place (e.g. 12.0x): Funding-capacity coverage multiple, defined as Salesforce nine-month employee stock plan proceeds divided by the magnitude of Slack's nine-month operating loss.",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A255"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V44",
+   "text": "Criterion 1 (FY2025 aggregate identified charge load as a percentage of FY2025 OIBDA at or above 7.0%) is tested on the response's own figure; golden value 7.1% -> PASS; the line reads \"Criterion 1: PASS\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A256"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V30",
+   "text": "The memo's closing block includes the line: \"Criterion 3: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A257"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V58",
+   "text": "The memo's closing block includes the line: \"Criterion 1: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A258"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V61",
+   "text": "The memo's closing block includes the line: \"Criterion 4: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A259"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V49",
+   "text": "Criterion 3 (FY2018 dilution premium at or below 3.0%) is tested on the response's own figure; golden value 2.2% -> PASS; the line reads \"Criterion 3: PASS\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A260"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V2",
+   "text": "Other long-term liabilities at December 31, 2025: difference between the later-filed interim comparative column and the figure in the FY2025 10-K balance sheet = 17K at the stated precision, with inputs, sources and formula shown; reporting 0K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A261"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V26",
+   "text": "Expedia Group consolidated revenue, FY2018 = 11,223K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A262"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V57",
+   "text": "Figures reported in USD thousands as whole numbers with separators (e.g. $12,345K): Other long-term liabilities at December 31, 2025: difference between the later-filed interim comparative column and the figure in the FY2025 10-K balance sheet, FY2024 personnel expense caption delta between the FY2025 10-K comparative column and the FY2024 10-K as-originally-reported caption, FY2023 personnel expense caption delta between the FY2025 10-K comparative column and the FY2024 10-K as-originally-reported caption, Personnel expense caption delta for FY2023 between the two annual filings ....",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A263"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V49",
+   "text": "Criterion 2 (Slack gross margin, nine months ended October 31, 2020 at or above 85.0%) is tested on the response's own figure; golden value 86.7% -> PASS; the line reads \"Criterion 2: PASS\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A264"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V62",
+   "text": "The response ends with the required line: \"FINAL RECOMMENDATION: PROCEED / DECLINE\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A265"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_cfe00e1d",
+   "id": "V46",
+   "text": "The memo's closing block includes the line: \"Criterion 3: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A266"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V27",
+   "text": "Aggregate dollar-denominated remediation implied by the two failed admission gates, defined as incremental two-year operating cash flow required at the denominator to clear the 45.0% gate a plus the amount by which other long-term liabilities at December 31, 2025 exceed the $725M gate c ceiling = 297K at the stated precision, with inputs, sources and formula shown; reporting 0K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A267"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V46",
+   "text": "Non-guarantor-subsidiaries share of combined guarantor plus non-guarantor selling and marketing expense, three months ended MARCH 31, 2019 = 35.9% at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A268"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V51",
+   "text": "The memo's closing block includes the line: \"Terminal tie-out: PASS / TIE-OUT FAILED\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A269"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V18",
+   "text": "Near-term claims to be covered at November 30, 2025 = 9,434K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A270"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V55",
+   "text": "Figures reported in a multiple to one decimal place (e.g. 12.0x): Coverage of principal maturing on or before December 31, 2027 by cash and cash equivalents at June 30, 2026, Gate A coverage ratio: FY2024 net cash provided by operating activities to aggregate 2025 retired note principal.",
+   "label": "non_atomic",
+   "reasons": [
+    "list"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A271"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V62",
+   "text": "The memo's closing block includes the line: \"Terminal tie-out: PASS / TIE-OUT FAILED\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A272"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V26",
+   "text": "Exhibit E test = 1,871K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A273"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V33",
+   "text": "The terminal tie-out shows every place each multiply-used figure is used, with identical values, including: Slack total revenue, nine months ended October 31, 2020; Slack gross profit, nine months ended October 31, 2020; Slack total operating expenses, nine months ended October 31, 2020; Slack total operating expenses, fiscal year ended January 31, 2018; Slack total operating expenses, fiscal year ended January 31, 2017. Golden: UNRESOLVED — the answer key holds conflicting goldens; SME must resolve.",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A274"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V55",
+   "text": "The deliverable includes Workbook tab — screening criteria and terminal tie-out (workbook_tab).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A275"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V37",
+   "text": "The deliverable includes Workbook tab — screening criteria and terminal tie-out (workbook_tab).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A276"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V51",
+   "text": "The memo ends with exactly \"FINAL RECOMMENDATION: DECLINE\" and names the failing criterion/criteria (Criterion 3) as binding. Any other, hedged, or additional per-section recommendation fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "final_binding"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A277"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V13",
+   "text": "Implied intercompany eliminations against the consolidated selling and marketing line, three months ended March 31, 2019 = -67K at the stated precision, with inputs, sources and formula shown; reporting 0K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A278"
+  },
+  {
+   "source": "dc_CCL_DD_investment_committee__COMBINED_0f975208",
+   "id": "V47",
+   "text": "The deliverable includes Workbook tab — established figures (workbook_tab).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A279"
+  },
+  {
+   "source": "dc_CCL_MA_transaction__COMBINED_a2a243d0",
+   "id": "V27",
+   "text": "Sum of FY2025 printed revenue components = 26,621K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A280"
+  },
+  {
+   "source": "dc_NVDA_DD_investment_committee__COMBINED_df3bc572",
+   "id": "V10",
+   "text": "Net income, FY2024 = 29,760K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A281"
+  },
+  {
+   "source": "dc_EXPE_MA_transaction__COMBINED_a6e542bf",
+   "id": "V61",
+   "text": "The memo's closing block includes the line: \"Criterion 4: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A282"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V32",
+   "text": "The deliverable includes Workbook tab — screening criteria and terminal tie-out (workbook_tab).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A283"
+  },
+  {
+   "source": "dc_NVDA_DD_investment_committee__COMBINED_df3bc572",
+   "id": "V20",
+   "text": "The memo ends with exactly \"FINAL RECOMMENDATION: PROCEED\" with every criterion shown as PASS. Any other, hedged, or additional per-section recommendation fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "final_binding"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A284"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V59",
+   "text": "The memo's closing block includes the line: \"Criterion 2: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A285"
+  },
+  {
+   "source": "dc_DHX_COMBINED",
+   "id": "V118",
+   "text": "Verify that every pro forma operating-expense line item (cost of revenues, product development, sales and marketing, general and administrative, depreciation, amortization of intangible assets) is individually sourced from the S-1 Unaudited Pro Forma Combined Statement of Operations and summed to total pro forma operating expenses. The sum must equal the claimed total.  (depends on: V1)",
+   "label": "non_atomic",
+   "reasons": [
+    "list"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A286"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V60",
+   "text": "The memo's closing block includes the line: \"Criterion 3: PASS / FAIL\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A287"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V37",
+   "text": "The response ends with the required line: \"FINAL RECOMMENDATION: PROCEED / DECLINE\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A288"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V50",
+   "text": "The terminal tie-out shows every place each multiply-used figure is used, with identical values, including: Net cash provided by operating activities, FY2023; Net cash provided by operating activities, FY2025; Aggregate outstanding stated principal of senior and convertible senior notes at December 31, 2025; Aggregate stated principal of note tranches outstanding at the prior year-end but no longer outstanding at December 31, 2025; Excess of outstanding principal over value on the 0.75% Convertible Senior Notes due May 2025 at December 31, 2024; Total consolidated assets at June 30, 2026; Cash and cash equivalents at June 30, 2026; Personnel expenses, FY2023; Gross bookings growth, FY2025 versus FY2024; Aggregate outstanding stated principal of note tranches maturing on or before December 31, 2027, -tranche rows of the December 31, 2025 debt table; USD principal of the €750 million November 2026 tranche implied by the December 31, 2025 EUR/USD rate. Golden: \"Terminal tie-out: PASS\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A289"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V35",
+   "text": "Slack gross profit, fiscal year ended January 31, 2019 ( = 349K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A290"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V25",
+   "text": "The deliverable includes Workbook tab — screening criteria and terminal tie-out (workbook_tab).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A291"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V7",
+   "text": "Year-over-year change in net cash provided by operating activities, FY2024 versus FY2023, on the FY2025 10-K comparative = -50K at the stated precision, with inputs, sources and formula shown; reporting 979K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A292"
+  },
+  {
+   "source": "dc_CRM_DD_investment_committee__COMBINED_e13b017e",
+   "id": "V27",
+   "text": "Figures reported in USD thousands as whole numbers with separators (e.g. $12,345K): FY2026 total non-cash adjustments reconciling net income to operating cash flow (D&A + amortization of capitalized contract costs + stock-based compensation + gains on strategic investments (negative)), FY2026 net change in operating assets and liabilities ((AR, capitalized contract costs, prepaid/other assets, AP & accrued liabilities, operating lease liab)).",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A293"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_f33e9b27",
+   "id": "V34",
+   "text": "Combined Salesforce-plus-Slack revenue, nine months ended October 31, 2020 = 16,087K at the stated precision, with inputs, sources and formula shown; reporting 10,668K fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A294"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V17",
+   "text": "Recurring operating margin FY2023 = 11.4% at the stated precision, with inputs, sources and formula shown; reporting 8.0% fails.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work",
+    "trap"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A295"
+  },
+  {
+   "source": "dc_EXPE_DD_investment_committee__COMBINED_7c240297",
+   "id": "V9",
+   "text": "Change in the allowance for doubtful accounts, December 31, 2024 to December 31, 2025 = 19K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A296"
+  },
+  {
+   "source": "dc_BKNG_DD_investment_committee__COMBINED_f37e6307",
+   "id": "V49",
+   "text": "Criterion 3 (Coverage of principal maturing on or before December 31, 2027 by cash and cash equivalents at June 30, 2026 at or above 1.0x) is tested on the response's own figure; golden value 5.86x -> PASS; the line reads \"Criterion 3: PASS\".",
+   "label": "non_atomic",
+   "reasons": [
+    "value_outcome"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A297"
+  },
+  {
+   "source": "dc_DHX_COMBINED",
+   "id": "V140",
+   "text": "Table in exA contains these rows: ['Pro Forma Revenues', 'Cost of Revenues', 'Product Development', 'Sales & Marketing', 'General & Administrative', 'Depreciation & Amortization', 'Other Operating Expenses', 'Total Operating Expenses', 'Pro Forma Operating Income', 'Add-back: Depreciation & Amortization', 'Pro Forma EBITDA']; and these columns: ['$000s', 'Source Citation'].",
+   "label": "non_atomic",
+   "reasons": [
+    "list"
+   ],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A298"
+  },
+  {
+   "source": "dc_NVDA_DD_investment_committee__COMBINED_df3bc572",
+   "id": "V14",
+   "text": "Cash paid for income taxes, net of refunds, FY2026 = 20,288K at the stated precision, with inputs, sources and formula shown.",
+   "label": "non_atomic",
+   "reasons": [
+    "show_work"
+   ],
+   "labeled_by": "rubric rules 2-4",
+   "case": "A299"
+  },
+  {
+   "source": "dc_CRM_MA_transaction__COMBINED_bbd2cc5b",
+   "id": "V43",
+   "text": "The memo's closing block includes the line: \"Terminal tie-out: PASS / TIE-OUT FAILED\".",
+   "label": "atomic",
+   "reasons": [],
+   "labeled_by": "rubric judgement (rule 5 / 4)",
+   "case": "A300"
+  }
+ ]
+}

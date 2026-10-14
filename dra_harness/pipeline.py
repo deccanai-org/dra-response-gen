@@ -24,12 +24,14 @@ try:
     from .provider import OpenRouterDriver, resolve_slug, driver_for
     from .runner import run_task
     from .models import Task
+    from .cleanup import clean_run_dir, clean_staged_inputs, input_fingerprints
 except ImportError:  # run as a script from inside the package dir
     from config import PipelineConfig, load_env
     from csv_loader import load_packages
     from provider import OpenRouterDriver, resolve_slug, driver_for
     from runner import run_task
     from models import Task
+    from cleanup import clean_run_dir, clean_staged_inputs, input_fingerprints
 
 logger = logging.getLogger("dra.pipeline")
 
@@ -104,7 +106,7 @@ async def run_batch(
     async def _run(task: Task):
         async with sem:
             return await run_task(task, params_by_provider[task.provider],
-                                  drivers[task.provider])
+                                  drivers[task.provider], cleanup_inputs=cfg.cleanup_inputs)
 
     results = await asyncio.gather(*[_run(t) for t in tasks], return_exceptions=True)
 
@@ -122,6 +124,10 @@ async def run_batch(
         else:
             run_dicts.append(res.to_dict())
 
+    # ── Delete input files once every run is done (run folders again, then the downloads) ──
+    if cfg.cleanup_inputs and not cfg.dry_run:
+        _cleanup_batch(tasks, run_dicts, cfg)
+
     completed_at = datetime.now(timezone.utc)
     output = {
         "csv": csv_path,
@@ -133,6 +139,28 @@ async def run_batch(
         "results": run_dicts,
     }
     return output
+
+
+def _cleanup_batch(tasks: list[Task], run_dicts: list[dict], cfg: PipelineConfig) -> None:
+    """Sweep every run folder (covers runs that crashed before their own cleanup), then remove the
+    downloaded inputs inside the batch staging folder. Deliverables listed in the results are kept."""
+    try:
+        keep_by_run = {r.get("run_id"): list(r.get("output_files") or []) for r in run_dicts}
+        fp_cache: dict = {}
+        removed = freed = 0
+        for t in tasks:
+            key = tuple(sorted(t.file_paths))
+            if key not in fp_cache:
+                fp_cache[key] = input_fingerprints(t.file_paths)
+            st = clean_run_dir(t.output_dir, t.file_paths, keep=keep_by_run.get(t.run_id), fingerprints=fp_cache[key])
+            removed += st["removed"]; freed += st["bytes"]
+        all_inputs = sorted({p for t in tasks for p in t.file_paths})
+        st = clean_staged_inputs(all_inputs, cfg.staging_dir)
+        removed += st["removed"]; freed += st["bytes"]
+        logger.info("Cleanup: removed %d input file(s), %.1f MB freed%s", removed, freed / 1e6,
+                    f"; {st['skipped_outside']} local input(s) outside staging left untouched" if st["skipped_outside"] else "")
+    except Exception as e:                            # cleanup must never lose the results
+        logger.warning("Cleanup failed: %s", e)
 
 
 def _summarize(run_dicts: list[dict], cfg: PipelineConfig) -> dict:

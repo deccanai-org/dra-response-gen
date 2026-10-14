@@ -114,14 +114,15 @@ class GenParams:
 # ─── Top-level pipeline config ────────────────────────────────────────────────
 
 DEFAULT_PROVIDERS = [
-    # candidate models under test (all via OpenRouter → uniform local tools)
-    "opus5", "gpt56_sol", "gemini31_pro", "grok46",       # frontier closed
-    "gpt56_terra", "sonnet",                              # balanced closed
-    "deepseek_v4_flash", "kimi_k3", "glm52", "qwen",      # open weight
+    # candidate models under test, October 2026 (all via OpenRouter → uniform local tools)
+    "opus55", "gpt6_astra", "gpt61_sol", "gemini31_pro", "gemini38_flash", "grok47",   # frontier closed
+    "kimi_k3", "glm53", "qwen38_max", "deepseek_v4_pro",                                # open weight
 ]
 # Reference generators (Model_A / Model_B for the golden) — run these SEPARATELY,
 # not mixed into a candidate sweep: providers=REFERENCE_PROVIDERS on that run.
 REFERENCE_PROVIDERS = ["hunyuan", "doubao"]
+# Capability ceiling — one pass, separately (most expensive model).
+CEILING_PROVIDERS = ["fable51"]
 
 
 @dataclass
@@ -143,6 +144,7 @@ class PipelineConfig:
     resolve_files: bool = False        # download GDrive links to local files
     run_root: str = "./runs_dir"        # single root; each run gets a timestamped subfolder
     run_id: Optional[str] = None    # set at run start; names the per-run subfolder
+    cleanup_inputs: bool = True     # delete input files from run folders and the batch staging folder after the runs
 
     # ── OpenRouter ────────────────────────────────────────────────────
     api_key: Optional[str] = None      # falls back to OPENROUTER_API_KEY
@@ -151,19 +153,27 @@ class PipelineConfig:
     # ── Per-provider knobs ────────────────────────────────────────────
     defaults: GenParams = field(default_factory=GenParams)
     # Qwen 27B emits empty output at temp=1.0; it needs 0.3 for agentic tasks.
+    # Keys MUST match MODEL_REGISTRY keys exactly - an override under any other key is silently ignored
+    # (Aug 2026: "qwen" did not apply to "qwen27b").
     agent_overrides: dict = field(
         default_factory=lambda: {
-            # Qwen emits empty output at temp=1.0; needs 0.3 for agentic tasks.
-            "qwen": {"temperature": 0.3},
-            # Opus 5 and Sonnet 5 now default reasoning ON; GPT-5.6 is thinking-
-            # heavy too. On long agentic loops, "high" effort can run away on
-            # cost. Start at "medium" and raise only if quality drops on a real
-            # task. Sol also emits up to 128K — lift its cap for long deliverables.
-            "opus5":      {"reasoning_effort": "medium"},
-            "sonnet":     {"reasoning_effort": "medium"},
-            "gpt56_sol":  {"reasoning_effort": "medium", "max_tokens": 64000},
+            # Anthropic / OpenAI reasoning models default to reasoning ON; on long agentic loops "high"
+            # effort can run away on cost. Start at "medium" and raise only if quality drops on a real task.
+            "fable51":    {"reasoning_effort": "medium"},
+            "opus55":     {"reasoning_effort": "medium"},
+            "gpt6_astra": {"reasoning_effort": "medium", "max_tokens": 64000},
+            "gpt61_sol":  {"reasoning_effort": "medium", "max_tokens": 64000},
+            "gpt6_luna":  {"reasoning_effort": "medium"},
+            # Qwen 3.6 27B emitted empty output at temp=1.0 and needed 0.3 for agentic tasks; the same setting
+            # is the starting point for the 3.8 generation until test_models.py shows otherwise.
+            "qwen38_27b": {"temperature": 0.3},
+            "qwen38_max": {"temperature": 0.3},   # reasoning is mandatory on this endpoint: keep reasoning_effort set
+            # ── August 2026 generation (unchanged) ──
+            "opus5":       {"reasoning_effort": "medium"},
+            "sonnet":      {"reasoning_effort": "medium"},
+            "gpt56_sol":   {"reasoning_effort": "medium", "max_tokens": 64000},
             "gpt56_terra": {"reasoning_effort": "medium"},
-            "qwen27b": {"temperature": 0.3},
+            "qwen27b":     {"temperature": 0.3},
         }
     )   # {provider: {field: val}}
     model_overrides: dict = field(default_factory=dict)   # {provider: "slug"}

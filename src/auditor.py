@@ -69,7 +69,10 @@ logger = logging.getLogger("dra.auditor")
 #: https://platform.claude.com/docs/en/about-claude/models/overview
 MAX_OUTPUT_CEILING = 96000
 
-CALL1_MAX_TOKENS = 32000
+# 48k (was 32k): call 1 was cut off at 32k in 5 of 6 observed attempts (CCL 2/3, BKNG 3/3, Oct 2026) — Opus 5
+# thinks and the thinking counts against the budget. A higher cap costs nothing unless used; each cut-off cost a
+# whole wasted call before the 1.5x retry.
+CALL1_MAX_TOKENS = 48000
 #: Call 2 now re-emits EVERY claim with links, plus judgment steps, plus four
 #: full corrected artifacts (solution logic, prompt, sanity check, verifiers),
 #: plus changes and findings. On a 60-verifier task that dwarfs the old 16k.
@@ -1017,6 +1020,15 @@ def _finalize_verifier_set(result: "AuditResult", original_verifiers_text: str,
         sanity_check=result.corrected_sanity_check,
         mapping_report=mapping_report, coverage=coverage,
         verifier_to_step=frozen_map, model=model_name)
+    # Atomicity: the specialist call (shared rules, src/atomic_rules.py) decides the splits; the
+    # all-in-one audit above keeps the other five properties. Fail-soft: its splits stand if this fails.
+    if not va.error and os.environ.get("AUDITOR_ATOMICITY_SPECIALIST", "1") != "0":
+        from src.verifier_audit_split import atomicity_decide
+        _spec = atomicity_decide(all_vs, ev, frozen_map, model=model_name)
+        if _spec is not None:
+            va.notes = (str(va.notes or "") + f" | atomicity specialist ({model_name}): {len(_spec)} split(s) "
+                        f"replace the property audit's {len(va.splits or {})}").strip(" |")
+            va.splits = _spec
     result.verifier_audit = va.to_dict()
     if not va.error:
         if va.rewrites:
@@ -1031,7 +1043,11 @@ def _finalize_verifier_set(result: "AuditResult", original_verifiers_text: str,
             result.verifier_rewrites_pending = _pending
         if va.splits:
             all_vs, ev, split_log = apply_splits(all_vs, va.splits, ev)
-            result.verifier_splits_applied = split_log
+            # bands a split ADDED are held for the SME (tolerance is never auto-applied)
+            _held = [h for e in split_log for h in (e.get("held_bands") or [])]
+            result.verifier_splits_applied = [e for e in split_log if e.get("parent")]
+            if _held:
+                result.verifier_rewrites_pending = list(result.verifier_rewrites_pending or []) + _held
         valid = {v["id"] for v in all_vs}
         ev = {k: v for k, v in ev.items() if k in valid}
         # re-map after splits: children are new verifiers

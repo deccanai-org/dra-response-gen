@@ -266,6 +266,7 @@ class GDriveClient:
         return service.files().get(
             fileId=file_id,
             fields="id,name,mimeType,size",
+            supportsAllDrives=True,          # shared-drive files: without it the API answers "not found"
         ).execute()
 
     def download_file(self, file_id: str, dest_path: str, name_prefix: str = "") -> str:
@@ -320,7 +321,7 @@ class GDriveClient:
         # Regular file → direct download
         actual_path = str(Path(dest_path).parent / f"{name_prefix}{name}")
 
-        request = service.files().get_media(fileId=file_id)
+        request = service.files().get_media(fileId=file_id, supportsAllDrives=True)
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
         done = False
@@ -340,11 +341,15 @@ class GDriveClient:
         page_token = None
 
         while True:
+            # Shared drives: without both flags the API silently returns NO files for a shared-drive folder
+            # (Oct 2026: the EDGAR task folders listed 0 files here and 10 with the flags).
             response = service.files().list(
                 q=f"'{folder_id}' in parents and trashed=false",
                 fields="nextPageToken,files(id,name,mimeType,size)",
                 pageToken=page_token,
                 pageSize=100,
+                supportsAllDrives=True,
+                includeItemsFromAllDrives=True,
             ).execute()
 
             results.extend(response.get("files", []))

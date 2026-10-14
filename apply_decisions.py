@@ -404,9 +404,10 @@ def _items(pkg):
     # advisory model gaps for steps NOT in the deterministic list (gapx*),
     # matching the report's second gap loop
     det_steps = {str(s) for s in (cov.get("unwatched_load_bearing") or [])}
-    for j, (step, g) in enumerate(model_gaps.items()):
-        if step in det_steps:
-            continue
+    # numbered over the advisory steps ONLY, exactly like augment_report (enumerating all model gaps and
+    # skipping left holes, so an SME decision on gapx{j} could land on a different gap)
+    for j, step in enumerate(s2 for s2 in model_gaps if s2 not in det_steps):
+        g = model_gaps[step]
         out.append({"id": f"gapx{j}", "kind": "gap",
                     "payload": {"step": str(step),
                                 "proposed_verifier": g.get("proposed_verifier",

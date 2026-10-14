@@ -223,11 +223,158 @@ def _bash_execute(command: str) -> str:
 
 # ─── Read file ────────────────────────────────────────────────────────────────
 
+# ─── HTML / MHT as text ──────────────────────────────────────────────────────
+# SEC filings are inline-XBRL HTML: served raw, a 10-K is ~2.1M characters of markup (22-25 capped reads);
+# as text it is ~300K (4 reads) and a 10-Q ~80K (1 read). Measured on CCL filings, Oct 2026: every visible
+# tagged figure survives (604/605 — the one missing is a HIDDEN XBRL fact, invisible to a human reader).
+_HTML_EXTS = (".htm", ".html", ".xhtml", ".mht", ".mhtml")
+_HTML_CACHE: dict = {}
+_NUMLIKE = __import__("re").compile(r"^[\(\-—–]?\$?\s*[\d,]+(\.\d+)?\)?%?$|^[—–-]$")
+_YEARLIKE = __import__("re").compile(r"^(19|20)\d\d$")
+
+
+def _html_source(path: str) -> str:
+    """HTML of a .htm/.html file, or the HTML part of a .mht/.mhtml (MIME, quoted-printable/base64)."""
+    raw = open(path, "rb").read()
+    if os.path.splitext(path)[1].lower() in (".mht", ".mhtml") or raw[:400].lower().find(b"mime-version") != -1:
+        import email
+        msg = email.message_from_bytes(raw)
+        for part in msg.walk():
+            if part.get_content_type() == "text/html":
+                payload = part.get_payload(decode=True) or b""
+                return payload.decode(part.get_content_charset() or "utf-8", errors="replace")
+    return raw.decode("utf-8", errors="replace")
+
+
+def _table_text(table) -> str:
+    """One line per row, cells joined by ' | ', each figure under its own period column.
+    SEC tables split a period into sub-columns ('$' | value | ')') under one header cell spanning them, so
+    alignment is by HEADER SPAN, not grid position: the header row nearest the data defines the logical
+    columns; each data cell goes to the column whose span contains it ('$' dropped, ')' and '%' attached);
+    upper header rows ('Three Months Ended ...') repeat across every column they cover; a blank period stays
+    blank. Text that falls outside every column is appended to its row — never dropped."""
+    import re as _re
+    rows = []
+    for tr in table.find_all("tr"):
+        if tr.find_parent("table") is not table:
+            continue
+        pos, cells = 0, []
+        for td in tr.find_all(["td", "th"], recursive=False):
+            t = _re.sub(r"\s+", " ", td.get_text(" ", strip=True)).strip()
+            # nested tags split '(1,818)' into '( 1,818 )': rejoin so a figure reads as one token
+            t = _re.sub(r"\(\s+(?=[\d$])", "(", t)
+            t = _re.sub(r"(?<=[\d%])\s+\)", ")", t)
+            t = _re.sub(r"\$\s+(?=[\d(])", "$", t)
+            try:
+                span = max(1, int(td.get("colspan", 1) or 1))
+            except ValueError:
+                span = 1
+            cells.append((pos, pos + span, t)); pos += span
+        rows.append(cells)
+    is_num = lambda t: bool(_NUMLIKE.match(t.replace(" ", ""))) and not _YEARLIKE.match(t)
+    data_start = next((i for i, r in enumerate(rows) if any(is_num(t) for _, _, t in r)), None)
+
+    def simple(r):                                   # no header structure: non-empty cells, folded
+        out = []
+        for _, _, t in r:
+            if not t or t == "$":
+                continue
+            if t in (")", "%", ")%") and out:
+                out[-1] += t
+            else:
+                out.append(t)
+        return " | ".join(out)
+
+    # the label column ends where the first figure of any data row starts
+    first = min((s0 for r in rows[data_start:] for s0, _, t in r if t and is_num(t)), default=None) \
+        if data_start is not None else None
+    heads = [r for r in (rows[:data_start] if data_start else [])
+             if sum(1 for s0, e0, t in r if t and e0 > (first or 0)) >= 2]   # spans overlapping the figures
+    if not heads or first is None:
+        return _complete("\n".join(x for x in (simple(r) for r in rows) if x), rows)
+    # columns: the lowest header row's cells, plus any column only an UPPER header row names
+    # ('Increase (Decrease)', 'Carrying Value' sit above columns the lowest row leaves blank)
+    groups = [(s0, e0) for s0, e0, t in heads[-1] if t and e0 > first]
+    for hr in reversed(heads[:-1]):
+        for s0, e0, t in hr:
+            if t and e0 > first and not any(s0 < ge and e0 > gs for gs, ge in groups):
+                groups.append((max(s0, first), e0))
+    groups.sort()
+    lines = []
+    for r in rows[:data_start]:
+        if r in heads:
+            lab = " ".join(t for s0, e0, t in r if t and e0 <= first)
+            cols = [next((t for s0, e0, t in r if t and e0 > first and s0 < ge and e0 > gs), "") for gs, ge in groups]
+            lines.append(lab + " | " + " | ".join(cols))
+        elif any(t for _, _, t in r):
+            lines.append(simple(r))
+    for r in rows[data_start:]:
+        label = " ".join(t for s0, _, t in r if t and s0 < first and t != "$")
+        vals, extra = ["" for _ in groups], []
+        for s0, e0, t in r:
+            if not t or s0 < first or t == "$":
+                continue
+            g = next((k for k, (gs, ge) in enumerate(groups) if gs <= s0 < ge), None)
+            if g is None:
+                g = next((k for k, (gs, ge) in enumerate(groups) if s0 < ge), None) if t in (")", "%", ")%") else None
+            if g is None:
+                if t in (")", "%", ")%") and extra:
+                    extra[-1] += t
+                else:
+                    extra.append(t)
+            elif t in (")", "%", ")%"):
+                vals[g] += t
+            else:
+                vals[g] = (vals[g] + " " + t).strip()
+        cells = [label] + vals + extra
+        while len(cells) > 1 and not cells[-1]:
+            cells.pop()
+        if any(cells):
+            lines.append(" | ".join(cells))
+    return _complete("\n".join(lines), rows)
+
+
+def _complete(text, rows):
+    """Lossless guard: any cell text the layout did not place is appended, never dropped."""
+    flat = text.replace(" ", "")
+    lost = [t for r in rows for _, _, t in r if t and t not in ("$", ")", "%", ")%") and t.replace(" ", "") not in flat]
+    return text + ("\n[unplaced cells] " + " | ".join(dict.fromkeys(lost)) if lost else "")
+
+
+def _html_text(path: str) -> str:
+    """Readable text of an HTML/MHT filing (what a person reading it sees), cached per file version."""
+    import re as _re, warnings
+    key = (path, os.path.getmtime(path))
+    if key in _HTML_CACHE:
+        return _HTML_CACHE[key]
+    from bs4 import BeautifulSoup
+    try:
+        from bs4 import XMLParsedAsHTMLWarning
+        warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
+    except ImportError:
+        pass
+    soup = BeautifulSoup(_html_source(path), "lxml")
+    for t in soup(["script", "style", "head"]):
+        t.decompose()
+    for t in soup.find_all(_re.compile(r"^ix:header$", _re.I)):
+        t.decompose()                                  # hidden XBRL contexts/units/facts
+    for t in soup.find_all(style=_re.compile(r"display\s*:\s*none", _re.I)):
+        t.decompose()                                  # hidden from a human reader
+    for table in reversed(soup.find_all("table")):     # innermost first
+        table.replace_with(soup.new_string("\n" + _table_text(table) + "\n"))
+    text = _re.sub(r"[ \t]+\n", "\n", soup.get_text("\n", strip=True))
+    text = _re.sub(r"\n{2,}", "\n", text)
+    _HTML_CACHE.clear() if len(_HTML_CACHE) > 64 else None
+    _HTML_CACHE[key] = text
+    return text
+
+
 @register_tool(
     name="read_file",
     description=(
         "Read the contents of a file. Supports .txt, .csv, .json, .md, .py, "
-        ".xlsx (all sheets), .pdf (text extraction), .docx. "
+        ".xlsx (all sheets), .pdf (text extraction), .docx, and .htm/.html/.mht "
+        "(returned as readable text, one table row per line with cells separated by ' | '). "
         f"Text content is capped at {DEFAULT_READ_CHARS:,} characters by default. "
         "When a file exceeds that, the result states how many characters remain "
         "and how to reach them - use bash_execute or python_execute to search the "
@@ -260,7 +407,8 @@ def _read_file(path: str, max_chars: int = -1) -> str:
     only the part you need.
 
     Supported: text formats, .json (parsed + pretty-printed), .md, .xlsx/.xls,
-    .pdf, .docx, .pptx (slides + tables + speaker notes, notes clearly labeled).
+    .pdf, .docx, .pptx (slides + tables + speaker notes, notes clearly labeled),
+    .htm/.html/.xhtml/.mht/.mhtml (as readable text: one table row per line, cells ' | ').
     """
     import os
 
@@ -309,8 +457,12 @@ def _read_file(path: str, max_chars: int = -1) -> str:
                 # not valid JSON — return raw so nothing is lost
                 return cap(raw)
 
+        # ---- HTML / MHT filings: readable text, not markup ----
+        if ext in _HTML_EXTS:
+            return cap(_html_text(path)) or "[no readable text in this HTML file]"
+
         # ---- Plain-text formats (now includes .md explicitly) ----
-        if ext in (".txt", ".csv", ".md", ".markdown", ".py", ".js", ".html",
+        if ext in (".txt", ".csv", ".md", ".markdown", ".py", ".js",
                    ".xml", ".yaml", ".yml", ".toml", ".log", ".tsv", ".sql", ".rst", ".ini"):
             with open(path, "r", encoding="utf-8", errors="replace") as f:
                 return cap(f.read())
@@ -702,6 +854,8 @@ def _search_in_file(path: str, query: str, context_lines: int = 3) -> str:
             text = _read_file(path, max_chars=0)
         elif ext == ".docx":
             text = _read_file(path, max_chars=0)
+        elif ext in _HTML_EXTS:
+            text = _html_text(path)                    # search the text a reader sees, not the markup
         else:
             with open(path, "r", encoding="utf-8", errors="replace") as f:
                 text = f.read()

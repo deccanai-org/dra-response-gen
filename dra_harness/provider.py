@@ -36,35 +36,56 @@ logger = logging.getLogger("dra.provider")
 # Slugs are placeholders for sensible current models; change freely.
 
 MODEL_REGISTRY: dict[str, dict] = {
-    # ── Tier 1 — frontier closed (capability ceiling) ────────────────────────
-    "opus5":       {"slug": "anthropic/claude-opus-5",        "supports_tools": True},
-    "gpt56_sol":   {"slug": "openai/gpt-5.6-sol",             "supports_tools": True},
-    "gemini31_pro": {"slug": "google/gemini-3.1-pro-preview", "supports_tools": True},
-    "grok46":      {"slug": "x-ai/grok-4.6",                  "supports_tools": True},
+    # Slugs verified against OpenRouter's live /api/v1/models listing on 13 Oct 2026.
 
-    # ── Tier 2 — balanced closed (production price/latency) ───────────────────
-    "gpt56_terra": {"slug": "openai/gpt-5.6-terra",           "supports_tools": True},
-    "sonnet":      {"slug": "anthropic/claude-sonnet-5",      "supports_tools": True},
+    # ── Ceiling reference (run separately: CEILING_PROVIDERS in config.py) ──────
+    "fable51":     {"slug": "anthropic/claude-fable-5.1",       "supports_tools": True},
 
-    # ── Tier 3 — open-weight frontier (cost floor / self-host / Tencent) ──────
-    "deepseek_v4_flash": {"slug": "deepseek/deepseek-v4-flash", "supports_tools": True},
-    "kimi_k3":     {"slug": "moonshotai/kimi-k3",             "supports_tools": True},
-    "glm52":       {"slug": "z-ai/glm-5.2",                   "supports_tools": True},
-    "qwen":        {"slug": "qwen/qwen3.6-35b-a3b",           "supports_tools": True},
-    "qwen27b":     {"slug": "qwen/qwen3.6-27b",              "supports_tools": True},
+    # ── Tier 1 — frontier closed ─────────────────────────────────────────────────
+    "opus55":      {"slug": "anthropic/claude-opus-5.5",        "supports_tools": True},
+    "gpt6_astra":  {"slug": "openai/gpt-6-astra",               "supports_tools": True},
+    "gpt61_sol":   {"slug": "openai/gpt-6.1-sol",               "supports_tools": True},
+    "gemini31_pro": {"slug": "google/gemini-3.1-pro-preview",   "supports_tools": True},   # still Google's newest Pro
+    "gemini38_flash": {"slug": "google/gemini-3.8-flash",       "supports_tools": True},
+    "grok47":      {"slug": "x-ai/grok-4.7",                    "supports_tools": True},
 
-    # ── Incumbent reference slot (Tencent deal context) — Model_A / Model_B ───
+    # ── Tier 2 — balanced closed ─────────────────────────────────────────────────
+    "gpt6_luna":   {"slug": "openai/gpt-6-luna",                "supports_tools": True},
+
+    # ── Tier 3 — open weight ─────────────────────────────────────────────────────
+    "kimi_k3":     {"slug": "moonshotai/kimi-k3",               "supports_tools": True},
+    "glm53":       {"slug": "z-ai/glm-5.3",                     "supports_tools": True},
+    "qwen38_max":  {"slug": "qwen/qwen3.8-max-0902",            "supports_tools": True},   # reasoning is mandatory on this endpoint
+    "qwen38_27b":  {"slug": "qwen/qwen3.8-27b",                 "supports_tools": True},
+    # 'deepseek/deepseek-v4-pro' is the April 0423 build; the August GA model is pinned below.
+    "deepseek_v4_pro": {"slug": "deepseek/deepseek-v4-pro-0813", "supports_tools": True},
+    "deepseek_v41_flash": {"slug": "deepseek/deepseek-v4.1-flash", "supports_tools": True},
+
+    # ── Incumbent reference slot (Tencent deal context) — Model_A / Model_B ─────
     # Kept as fixed reference generators regardless of leaderboard rank.
-    "hunyuan":     {"slug": "tencent/hy3",                    "supports_tools": True},
-    "doubao":      {"slug": "doubao-seed-2-1-pro-260628",     "supports_tools": True,
+    "hunyuan":     {"slug": "tencent/hy4-preview",              "supports_tools": True},
+    # Seed 2.1 PRO is not on OpenRouter (only Seed 2.1 Turbo is): stays on CometAPI.
+    "doubao":      {"slug": "doubao-seed-2-1-pro-260628",       "supports_tools": True,
                     "base_url": "https://api.cometapi.com/v1",
                     "api_key_env": "COMETAPI_KEY"},
 
-    # ── Legacy aliases (so older configs / CLI that say "claude"/"openai"/"gemini"
-    #    keep working; they point at the current tier for that vendor). ─────────
-    "claude":      {"slug": "anthropic/claude-opus-5",        "supports_tools": True},
-    "openai":      {"slug": "openai/gpt-5.6-sol",             "supports_tools": True},
-    "gemini":      {"slug": "google/gemini-3.1-pro-preview",  "supports_tools": True},
+    # ── August 2026 generation (kept so earlier runs stay reproducible) ──────────
+    "opus5":       {"slug": "anthropic/claude-opus-5",          "supports_tools": True},
+    "gpt56_sol":   {"slug": "openai/gpt-5.6-sol",               "supports_tools": True},
+    "gpt56_terra": {"slug": "openai/gpt-5.6-terra",             "supports_tools": True},
+    "sonnet":      {"slug": "anthropic/claude-sonnet-5",        "supports_tools": True},
+    "grok46":      {"slug": "x-ai/grok-4.6",                    "supports_tools": True},
+    "deepseek_v4_flash": {"slug": "deepseek/deepseek-v4-flash", "supports_tools": True},
+    "glm52":       {"slug": "z-ai/glm-5.2",                     "supports_tools": True},
+    "qwen27b":     {"slug": "qwen/qwen3.6-27b",                 "supports_tools": True},
+    "hunyuan_hy3": {"slug": "tencent/hy3",                      "supports_tools": True},
+    # DISQUALIFIED (Aug 2026: fabricates boilerplate, narrates tool use as prose, never reads files) - never in a sweep
+    "qwen":        {"slug": "qwen/qwen3.6-35b-a3b",             "supports_tools": True},
+
+    # ── Legacy aliases ("claude"/"openai"/"gemini") → the current tier for that vendor ──
+    "claude":      {"slug": "anthropic/claude-opus-5.5",        "supports_tools": True},
+    "openai":      {"slug": "openai/gpt-6.1-sol",               "supports_tools": True},
+    "gemini":      {"slug": "google/gemini-3.1-pro-preview",    "supports_tools": True},
 }
 
 def driver_for(provider: str, dry_run: bool = False) -> "OpenRouterDriver":

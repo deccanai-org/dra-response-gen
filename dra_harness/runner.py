@@ -22,11 +22,13 @@ try:
     from .provider import supports_tools
     from .models import RunResult, ToolCall, TurnRecord
     from .mcp_client import MCPToolClient
+    from .cleanup import clean_run_dir
 except ImportError:
     import file_gen
     from provider import supports_tools
     from models import RunResult, ToolCall, TurnRecord
     from mcp_client import MCPToolClient
+    from cleanup import clean_run_dir
 
 logger = logging.getLogger("dra.runner")
 
@@ -366,7 +368,7 @@ def _postprocess_outputs(harvested: list, staging: str, task, response_text: str
 
 # ─── Run one task ─────────────────────────────────────────────────────────────
 
-async def run_task(task, params, driver) -> RunResult:
+async def run_task(task, params, driver, cleanup_inputs: bool = False) -> RunResult:
     started = datetime.now(timezone.utc)
     logger.info(
         "[%s] start (model=%s, dry_run=%s)",
@@ -583,6 +585,15 @@ async def run_task(task, params, driver) -> RunResult:
     rejected = [b for b, v in deliverable_validity.items() if not v["valid"]]
     if demands_file and not produced_file and rejected and not error:
         error = f"deliverable content rejected: {rejected}"
+
+    # ── Remove input files from this run's folder (deliverables are kept) ──
+    if cleanup_inputs:
+        try:
+            st = clean_run_dir(staging, task.file_paths, keep=output_files)
+            if st["removed"]:
+                logger.info("[%s] cleanup: removed %d input file(s), %.1f MB", task.run_id, st["removed"], st["bytes"] / 1e6)
+        except Exception as e:                      # cleanup never affects the run's result
+            logger.warning("[%s] cleanup failed: %s", task.run_id, e)
 
     return _finish(
         task, started,

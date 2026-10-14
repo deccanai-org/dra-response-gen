@@ -116,7 +116,10 @@ def resplit_adjudicated(pkg: dict, provider: Optional[callable] = None) -> dict:
     if va.splits:
         verifiers, ev, split_log = apply_splits(verifiers, va.splits, ev)
         pkg["expected_values"] = ev
-        pkg["verifier_splits_applied"] = split_log
+        pkg["verifier_splits_applied"] = [e for e in split_log if e.get("parent")]
+        _held = [h for e in split_log for h in (e.get("held_bands") or [])]
+        if _held:                                      # bands a split ADDED: held for the SME
+            pkg["verifier_rewrites_pending"] = list(pkg.get("verifier_rewrites_pending") or []) + _held
 
     pkg["augmented_verifiers_text"] = _to_text(verifiers)
     note = (f"post-adjudication re-split RAN: {n_before} -> {len(verifiers)} verifiers "

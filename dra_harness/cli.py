@@ -66,6 +66,7 @@ def _build_config(args) -> PipelineConfig:
         resolve_files=args.resolve_files,
         defaults=defaults,
         model_overrides=model_overrides,
+        cleanup_inputs=not args.keep_inputs,
     )
 
 
@@ -118,6 +119,8 @@ def main() -> None:
     parser.add_argument("--staging-dir", default="./staging")
     parser.add_argument("--resolve-files", action="store_true",
                         help="Download GDrive links to local files before running")
+    parser.add_argument("--keep-inputs", action="store_true",
+                        help="Keep the input files in the run folders and staging (default: delete them after the runs)")
     parser.add_argument("--no-save", action="store_true",
                         help="Do not write the results JSON to disk")
     parser.add_argument("--verbose", "-v", action="store_true")
